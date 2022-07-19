@@ -1,14 +1,14 @@
 
 <div align="center">
   
-  <!-- <h1>Word Block</h1> -->
-  <h4 align="center">
-    一个为实现开放、可交互的块引用而建立的**web3笔记工具**。每个人都可以发布自己拥有的笔记（或文章、网站），由带有钱包签名的文本单元（即文字块）组成。
-  </h4>
+  # Word Block
+
+
+  <p>一个为实现开放、可交互的块引用而建立的 **web3笔记工具**。每个人都可以发布自己拥有的笔记（或文章、网站），由带有钱包签名的文本单元（即文字块）组成。</p>
   
 </div>
 
-[中文](https://github.com/fat-garage/word-block/README-EN.md) / English  
+[中文](https://github.com/fat-garage/word-block/blob/main/README-EN.md) / English  
 
 ## Introduction
 
