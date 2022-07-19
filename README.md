@@ -45,6 +45,4 @@ Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including 
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! 
 
-Jessie - [@JESSCATE93](https://twitter.com/JESSCATE93) - jessie@fatgarage.com
 
-Project Link: [https://wordblock.com](https://github.com/ownership-labs/wordblock-extension)
