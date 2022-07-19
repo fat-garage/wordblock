@@ -9,7 +9,7 @@ Use this Chrome extension to experience portable, block-based note-taking backed
 ## Get Started
 
 ```sh
-$ git clone https://github.com/ownership-labs/wordblock-extension
+$ git clone https://github.com/fat-garage/wordblock
 $ Open chrome://extensions page
 $ Enable "Developer mode"
 $ Install extension via "Load unpacked"
