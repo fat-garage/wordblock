@@ -8,7 +8,7 @@
   
 </div>
 
-
+[中文](https://github.com/fat-garage/word-block/README-EN.md) / English  
 
 ## Introduction
 
