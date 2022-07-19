@@ -51,5 +51,10 @@ Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including 
 
 ## Contributing
 
+<<<<<<< HEAD
 贡献是使开源社区成为一个学习、启发和创造的奇妙场所的原因。你的任何贡献都是**的，非常感谢。如果你有什么建议可以让它变得更好，请分叉该版本并创建一个拉动请求。你也可以简单地打开一个带有 "增强 "标签的问题。不要忘了给这个项目一颗星! 
+=======
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! 
+
+>>>>>>> ceef7f6edd9a92d8a0efd3ccf6a48beb28e3b6d0
 
