@@ -1,10 +1,18 @@
-# Wordblock
 
-A web3 note-taking tool built for open and interactive block reference. Everyone can publish user-owned notes (or articles, websites), composed by text cells with wallet signatures (i.e., word blocks).
+<div align="center">
+  
+  <!-- <h1>Word Block</h1> -->
+  <h4 align="center">
+    一个为实现开放、可交互的块引用而建立的**web3笔记工具**。每个人都可以发布自己拥有的笔记（或文章、网站），由带有钱包签名的文本单元（即文字块）组成。
+  </h4>
+  
+</div>
+
+
 
 ## Introduction
 
-Use this Chrome extension to experience portable, block-based note-taking backed by authenticated data. You could do block references in your writing (e.g. on [Mirror.xyz](https://mirror.xyz)), not only can you search and refer your own word blocks but also blocks created by anyone with a wallet. Once publish your writing, your publication is no longer a plain text, but interactive, block-chained knowledge graphs with verifiable ownership. See the demo video [here](https://github.com/ownership-labs/wordblock-extension).
+使用这个Chrome扩展插件来体验由经过身份验证的数据支持的便携式、块状笔记。你可以在**写作**中进行文字块引用（例如在[Mirror.xyz](https://mirror.xyz)），你不仅可以引用/搜索你自己的文字块，还可以引用/搜索任何有钱包的人创建的文字块。写作**发布**后，你的文章就不再是一个纯文本，而是由可交互时文字块链接成的、具有可验证所有权的知识图谱。请看演示视频[这里](https://github.com/fat-garage/wordblock).
 
 ## Get Started
 
@@ -17,13 +25,13 @@ $ Install extension via "Load unpacked"
 
 ## User Story
 
-(+ image/gif)
 
-* You curate any internet text or article into word blocks under your signature, specifically when you take notes or just highlight something while reading. Each block will be automatically assigned with a unique ID and secured on IPFS for public access.
+* 你可以把任何互联网上的文字或文章收藏成你签名下的字块，特别是当你在阅读时做笔记，或只是强调某些内容。每个文字块都会自动分配一个唯一的ID，并在IPFS上进行加密，并供公众访问。
 
-* When you write and publish on Mirror, you are composing your article with multiple blocks, each has its own ID and knowledge. You can write to create new blocks `·` inside your publication, or search to refer `((block))` `[[page]]` existing blocks created by you or others. 
+* 当你在Mirror上写作和发布时，你正在用多个块组撰写你的文章，每个块都有自己的ID和知识。你可以通过写作来创建新的块`·`在你发布的文章，或者通过搜索来参考`（（块））``[[页]]`你或其他人创建的文字块。
 
-* Word blocks make your article become interactive and collaborative. Everyone can simply track block references and verify signature chains. That's WEB3.
+* 文字块使你的文章成为可互动和协作的。每个人都可以轻松的跟踪块的引用并验证签名链。这就是WEB3。
+
 
 Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including `text`, `creator`, `referer`, `url`, `comments`, `tags`...), then `wallet_B` writes `block_B` in which `block_A` is referenced with new comments (this leads to another `block_A_ref`) and publish `article_B`. When you see it,  `block_A_ref` -> `block_A` -> `any internet text` can be discovered with attached ownerships of `wallet_B`, `wallet_A`, `original_author`.
 
@@ -43,8 +51,5 @@ Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including 
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! 
+贡献是使开源社区成为一个学习、启发和创造的奇妙场所的原因。你的任何贡献都是**的，非常感谢。如果你有什么建议可以让它变得更好，请分叉该版本并创建一个拉动请求。你也可以简单地打开一个带有 "增强 "标签的问题。不要忘了给这个项目一颗星! 
 
-Jessie - [@JESSCATE93](https://twitter.com/JESSCATE93) - jessie@fatgarage.com
-
-Project Link: [https://wordblock.com](https://github.com/ownership-labs/wordblock-extension)
