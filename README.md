@@ -50,6 +50,34 @@ Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including 
 - 借助ceramic实现可验证的文字块所有权:
   - sign-in with Ethereum: 通过钱包创建session key，并对文字块签名，以证明块创建人为特定钱包地址
   - stream and indexing: 文字块存储在Ceramic流数据网络，具有唯一blockID但可动态修改。blockIDs间的引用关系可索引
+  
+### v2:  web3 publication 
+
+- theEdge:
+  - 开发新的编辑和发布工具，基于上述特点的知识参考协议。
+  - Focus: theoretical correctness.
+Web2修复计划，集成SDK，交互式文字
+- Search:
+  - 跨人搜索 提及数据库
+  - Focus: theoretical correctness.
+- ENS: 
+  - 分配给相关领域研究论文/文章一些subdomain，然后通过page(domain)将他们链接起来。比如在mirror上收集写的文章（则domain是ENS.eth)，然后按照标题自动分配给（或他们自己领）这些 一个subdomain token，如果是 就被分配sub sub domain token.   ENS/Bit/unstopped domain, polygon和sub, gasless
+  - 未来杂志社的感觉：一方面，每个人都可以做主编，去邀请作者，给他们分发subdomain。比如我想办一个与[[Bennu]]小行星相关的“杂志”或“书”（我的domain是bennu.eth），那我就去找与其相关的文章和作者，通过subdomain连接起来
+
+### v3: on-chain knowledge graphs
+
+- blockchain mapping:
+  - ETH/Polygon上的创作引用合约，将文字块/文章上链，链上维护链接引用关系（链下也会有一份，计数可能不同）
+  - Focus: pre-mainnet preparations.
+- Collaboration:
+  - Dataverse的私人文件夹/协作型兴趣图谱协议
+  - Privacy  私人文章、私人文字块时
+- Token:
+  - 激励创作和引用关系则是wordblock需要单独考虑的后续问题 @dongshu
+  - 发布文章时，需要交一笔创作费用；文章被引用，则可以得到收益，即引用文章需要付费；创作成本需大于引用成本，抑制抄袭，鼓励引用；
+  - wordblock的文字块，block粒度更细，还有检索需求。
+  - 知识图谱、引用策展人 承担信息过滤的工作量 来证明被引内容的价值
+  - 买笔 买笔记本 才能创作引用 实现内容传播   某个时间周期内的信息集合    文本链   最长链原则  某时间周期内引用链增幅比较大的 激励更多
 
 ## Contributing
 
