@@ -39,13 +39,13 @@ Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including 
 
 ### v1: MVP for note-taking tool
 
-- Mirror as block editor:
+- Mirror 作为文字块编辑器:
   - Extenson在Mirror中嵌入文字块`·` `[[]]` `(())`，可收藏互联网内容或他人Mirror文字块
   - 写作时自动创建文字块，并可搜索引用(已创建或收藏的)文字块，`· I like this ((blockB))`
   - 中心化记录钱包/文章/文字块的链接引用关系，后台计数
-- Bi-direction for the web: 
+- 为互联网打上双向链接:  
   - interactive text: 对任意网页/Mirror文章/文字块打上双向链接, `N linked references`，Extension将展示它在哪些地方被引用过(e.g., Mirror引用处的缩略图)，甚至反向跳转来追溯整个引用链条
-- Verifiable ownership upon Ceramic:
+- 借助ceramic实现可验证的文字块所有权:
   - sign-in with Ethereum: 通过钱包创建session key，并对文字块签名，以证明块创建人为特定钱包地址
   - stream and indexing: 文字块存储在Ceramic流数据网络，具有唯一blockID但可动态修改。blockIDs间的引用关系可索引
 
