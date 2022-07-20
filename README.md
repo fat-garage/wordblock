@@ -40,8 +40,10 @@ Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including 
 ### v1: MVP for note-taking tool
 
 - Mirror 作为文字块编辑器:
-  - Extenson在Mirror中嵌入文字块`·` `[[]]` `(())`，可收藏互联网内容或他人Mirror文字块
+  - Extension在Mirror中嵌入文字块 ，可收藏互联网内容或任意他人Mirror文字块
   - 写作时自动创建文字块，并可搜索引用(已创建或收藏的)文字块，`· I like this ((blockB))`
+      - 收藏别人在mirror文章里的文字块，将直接记做引用
+      - 如果是基于钱包交互的话，他不需要发布到mirror就可以 “+1”
   - 中心化记录钱包/文章/文字块的链接引用关系，后台计数
 - 为互联网打上双向链接:  
   - interactive text: 对任意网页/Mirror文章/文字块打上双向链接, `N linked references`，Extension将展示它在哪些地方被引用过(e.g., Mirror引用处的缩略图)，甚至反向跳转来追溯整个引用链条
