@@ -37,7 +37,7 @@ Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including 
     - by typing  or to search blocks directly while you write
     - see the reference record between your word block and the web
 - Bi-direction for the web: 
-  -   - interactive text:  Add bi-directional link  to any web page/mirror article/word block, showed as on them. You can check where it has been referenced, or even trace the whole reference chain.
+  - interactive text:  Add bi-directional link  to any web page/mirror article/word block, showed as on them. You can check where it has been referenced, or even trace the whole reference chain.
 - Verifiable ownership upon Ceramic:
   - sign-in with Ethereum
   - stream and indexing: Word block is stored in ceramic data stream. Every block is assigned with a blockID that manages various editing. The reference graph of the blockIDs can be indexed.
