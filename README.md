@@ -12,7 +12,7 @@
 
 ## Introduction
 
-使用这个Chrome扩展插件来体验由经过身份验证的数据支持的便携式、块状笔记。你可以在**写作**中进行文字块引用（例如在[Mirror.xyz](https://mirror.xyz)），你不仅可以引用/搜索你自己的文字块，还可以引用/搜索任何有钱包的人创建的文字块。写作**发布**后，你的文章就不再是一个纯文本，而是由可交互时文字块链接成的、具有可验证所有权的知识图谱。请看演示视频[这里](https://youtu.be/hsZIDzgiGOc).
+使用这个Chrome扩展插件来体验由经过身份验证的数据支持的便携式、块状笔记。你可以在**写作**中进行文字块引用（例如在[Mirror.xyz](https://mirror.xyz)），你不仅可以引用/搜索你自己的文字块，还可以引用/搜索任何有钱包的人创建的文字块。写作**发布**后，你的文章就不再是一个纯文本，而是由可交互时文字块链接成的、具有可验证所有权的知识图谱。请看演示视频[这里]([https://youtu.be/hsZIDzgiGOc](https://www.bilibili.com/video/BV19d4y1S7Ph/?vd_source=e6ef26ed403566bef5659af4a18a74fb)).
 
 ## Get Started
 
