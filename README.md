@@ -25,59 +25,51 @@ $ Install extension via "Load unpacked"
 
 ## User Story
 
-
 * 你可以把任何互联网上的文字或文章收藏成你签名下的字块，特别是当你在阅读时做笔记，或只是强调某些内容。每个文字块都会自动分配一个唯一的ID，并在IPFS上进行加密，并供公众访问。
 
 * 当你在Mirror上写作和发布时，你正在用多个块组撰写你的文章，每个块都有自己的ID和知识。你可以通过写作来创建新的块`·`在你发布的文章，或者通过搜索来参考`（（块））``[[页]]`你或其他人创建的文字块。
 
 * 文字块使你的文章成为可互动和协作的。每个人都可以轻松的跟踪块的引用并验证签名链。这就是WEB3。
 
-
-Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including `text`, `creator`, `referer`, `url`, `comments`, `tags`...), then `wallet_B` writes `block_B` in which `block_A` is referenced with new comments (this leads to another `block_A_ref`) and publish `article_B`. When you see it,  `block_A_ref` -> `block_A` -> `any internet text` can be discovered with attached ownerships of `wallet_B`, `wallet_A`, `original_author`.
+#### Chained Signatures
+Assuming `"any internet text"` is curated by `wallet_A` as `·block_A` (includes text, creator, referer, url, comments, tags and more), then `wallet_B` writes `·block_B` in which `·block_A` is referenced with new comments (this leads to another `·block_A_ref`) and publish the article. So `·block_A_ref` -> `·block_A` -> `any internet text` can be discovered with attached ownerships of `wallet_B`, `wallet_A`, `original_author`.
 
 ## Roadmap
 
-### v1: MVP for note-taking tool
+### v1: note-taking tool
 
-- Mirror 作为文字块编辑器:
-  - Extension在Mirror中嵌入文字块 ，可收藏互联网内容或任意他人Mirror文字块
-  - 写作时自动创建文字块，并可搜索引用(已创建或收藏的)文字块，`· I like this ((blockB))`
-      - 收藏别人在mirror文章里的文字块，将直接记做引用
-      - 如果是基于钱包交互的话，他不需要发布到mirror就可以 “+1”
-  - 中心化记录钱包/文章/文字块的链接引用关系，后台计数
-- 为互联网打上双向链接:  
-  - interactive text: 对任意网页/Mirror文章/文字块打上双向链接, `N linked references`，Extension将展示它在哪些地方被引用过(e.g., Mirror引用处的缩略图)，甚至反向跳转来追溯整个引用链条
-- 借助ceramic实现可验证的文字块所有权:
+- Mirror as block editor:
+  - Extenson在Mirror中嵌入文字块`·` `[[]]` `(())`，可收藏评论互联网内容或他人文字块
+  - 写作时自动创建文字块，并可搜索引用其他文字块，`· I like this ((blockB))`
+  - 搜索方式包括key words(适用于个人创建或收藏的块)、基于Address/ENS搜索他人块
+- Bi-direction for the web: 
+  - 中心化记录钱包/文章/文字块的链接引用关系，后台数据库计数
+  - interactive text: 对任意网页/Mirror文章/文字块打上双向链接, `N linked references`，Extension将展示其在哪些地方被引用过(如Mirror引用处的缩略图)或围绕它的评论集
+- Verifiable ownership upon IPFS/Ceramic:
   - sign-in with Ethereum: 通过钱包创建session key，并对文字块签名，以证明块创建人为特定钱包地址
-  - stream and indexing: 文字块存储在Ceramic流数据网络，具有唯一blockID但可动态修改。blockIDs间的引用关系可索引
-  
-### v2:  web3 publication 
+  - stream and indexing: 文字块存储在流数据网络，具有唯一blockID但可动态修改。blockIDs间的引用关系可索引
+
+### v2: web3 publication 
 
 - theEdge:
-  - 开发新的编辑和发布工具，基于上述特点的知识参考协议。
-  - Focus: theoretical correctness.
-Web2修复计划，集成SDK，交互式文字
-- Search:
-  - 跨人搜索 提及数据库
-  - Focus: theoretical correctness.
+  - develop a new block editor for web3 publishing, wordblock.com/blockID
+  - provide SDKs for web2 to display interactive blocks, ownership recovery
+- Co-edit: 
+  - 集成dataverse协作型兴趣图谱协议
+  - privacy: 私密文字块
 - ENS: 
-  - 分配给相关领域研究论文/文章一些subdomain，然后通过page(domain)将他们链接起来。比如在mirror上收集写的文章（则domain是ENS.eth)，然后按照标题自动分配给（或他们自己领）这些 一个subdomain token，如果是 就被分配sub sub domain token.   ENS/Bit/unstopped domain, polygon和sub, gasless
-  - 未来杂志社的感觉：一方面，每个人都可以做主编，去邀请作者，给他们分发subdomain。比如我想办一个与[[Bennu]]小行星相关的“杂志”或“书”（我的domain是bennu.eth），那我就去找与其相关的文章和作者，通过subdomain连接起来
+  - 基于subdomain连接blocks，比如[[Bennu.eth]]小行星主题杂志的子章节，被分配给Mars.Bennu.eth
+  - 未来杂志社：每个人都可以做主编，通过分发subdomain token来邀请作者，持有者可参与编辑。Gas费 .crypto on polygon 
+  
+### v3: incentivized knowledge graphs
 
-### v3: on-chain knowledge graphs
-
-- blockchain mapping:
-  - ETH/Polygon上的创作引用合约，将文字块/文章上链，链上维护链接引用关系（链下也会有一份，计数可能不同）
-  - Focus: pre-mainnet preparations.
-- Collaboration:
-  - Dataverse的私人文件夹/协作型兴趣图谱协议
-  - Privacy  私人文章、私人文字块时
+- Blockchain mapping:
+  - ETH/Polygon上的创作引用合约, 将Ceramic链下的文字块间引用关系上链
+  - 通过Chainlink Extenal Adapter统计文字块引用计数，相对去中心化
 - Token:
-  - 激励创作和引用关系则是wordblock需要单独考虑的后续问题 @dongshu
-  - 发布文章时，需要交一笔创作费用；文章被引用，则可以得到收益，即引用文章需要付费；创作成本需大于引用成本，抑制抄袭，鼓励引用；
-  - wordblock的文字块，block粒度更细，还有检索需求。
-  - 知识图谱、引用策展人 承担信息过滤的工作量 来证明被引内容的价值
-  - 买笔 买笔记本 才能创作引用 实现内容传播   某个时间周期内的信息集合    文本链   最长链原则  某时间周期内引用链增幅比较大的 激励更多
+  - 激励创作和引用关系则是wordblock需要单独考虑的问题。可能还需考虑 全局块搜索 加速知识检索 @dongshu
+  - 发文时交笔创作费用，文章被引可得到收益，引用文章需要付费；创作成本需大于引用成本，抑制抄袭，鼓励引用
+  - 买笔记本 实现内容传播和信息过滤 某时间周期内引用数涨幅大的 激励更多
 
 ## Contributing
 
