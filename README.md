@@ -1,6 +1,15 @@
-# Wordblock
 
-A web3 note-taking tool built for open and interactive block reference. Everyone can publish user-owned notes (or articles, websites), composed by text cells with wallet signatures (i.e., word blocks).
+<div align="center">
+  
+  # Word Block
+
+
+  <p>A web3 note-taking tool built for open and interactive block reference. Everyone can publish user-owned notes (or articles, websites), composed by text cells with wallet signatures (i.e., word blocks).</p>
+  
+</div>
+
+[中文](https://github.com/fat-garage/word-block/blob/main/README-CN.md) / English  
+
 
 ## Introduction
 
@@ -32,15 +41,14 @@ Assuming `"any internet text"` is curated by `wallet_A` as `block_A` (including 
 ### v1: MVP for note-taking tool
 
 - Mirror as block editor:
-  - When writing on mirror, you can 
-    - open WB as a sidebar, find and embed the block you have curated on the web
-    - by typing  or to search blocks directly while you write
-    - see the reference record between your word block and the web
+  - Extenson在Mirror中嵌入文字块`·` `[[]]` `(())`，可收藏互联网内容或他人Mirror文字块
+  - 写作时自动创建文字块，并可搜索引用(已创建或收藏的)文字块，`· I like this ((blockB))`
+  - 中心化记录钱包/文章/文字块的链接引用关系，后台计数
 - Bi-direction for the web: 
-  - interactive text:  Add bi-directional link  to any web page/mirror article/word block, showed as on them. You can check where it has been referenced, or even trace the whole reference chain.
+  - interactive text: 对任意网页/Mirror文章/文字块打上双向链接, `N linked references`，Extension将展示它在哪些地方被引用过(e.g., Mirror引用处的缩略图)，甚至反向跳转来追溯整个引用链条
 - Verifiable ownership upon Ceramic:
-  - sign-in with Ethereum
-  - stream and indexing: Word block is stored in ceramic data stream. Every block is assigned with a blockID that manages various editing. The reference graph of the blockIDs can be indexed.
+  - sign-in with Ethereum: 通过钱包创建session key，并对文字块签名，以证明块创建人为特定钱包地址
+  - stream and indexing: 文字块存储在Ceramic流数据网络，具有唯一blockID但可动态修改。blockIDs间的引用关系可索引
 
 ## Contributing
 
