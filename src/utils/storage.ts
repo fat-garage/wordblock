@@ -14,6 +14,7 @@ interface GetDataParams {
   limit: number,
   type: WordDataType,
   search?: string;
+  group?: string;
 }
 
 export function login() {
@@ -34,12 +35,12 @@ export function isLogin() {
   })
 }
 
-export function getData({ page, limit, type, search }: GetDataParams = { page: 0, limit: 10000, type: undefined, search: "" }): Promise<ResponseData> {
+export function getData({ page, limit, type, search, group }: GetDataParams = { page: 0, limit: 10000, type: undefined, search: "", group: '' }): Promise<ResponseData> {
   return new Promise(resolve => {
     chrome.storage.local.get([WORD_BLOCK_DATA], (result)=> {
       let data: ResponseData['data'] = result[WORD_BLOCK_DATA] || [];
 
-      data = data.reverse();
+      data = data.sort((item1, item2) => item2.create_at - item1.create_at);
       if (type) {
         data = data.filter(item => item.type === type);
       }
@@ -48,6 +49,21 @@ export function getData({ page, limit, type, search }: GetDataParams = { page: 0
         data = data.filter(item => item.content.toLowerCase().includes(search.toLowerCase()));
       }
 
+      data = data.filter(item => {
+        if (!group) {
+          return true;
+        }
+
+        if (group === 'favorite' && !item.group) {
+          return true;
+        }
+        return item.group === group;
+      })
+
+      data = data.map(item => ({
+        ...item,
+        author: item.author || 'unknown'
+      }))
       resolve({
         data: data.slice(page * limit, page * limit + limit),
         total: data.length,

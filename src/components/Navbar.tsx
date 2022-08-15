@@ -9,6 +9,8 @@ import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip';
 import logo from '../assets/img/logo.png';
 import logout from '../assets/img/logout.png';
+import edit from '../assets/img/edit.png';
+import { useHistory } from 'react-router-dom';
 
 interface NavbarProps {
   word: string;
@@ -23,7 +25,7 @@ const Search = styled('div')(({ theme }) => ({
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginLeft: 30,
+  marginLeft: 20,
   marginRight: 4,
   width: '100%',
 }));
@@ -48,26 +50,88 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+// export default function Navbar({ word, setWord, toLogout }: NavbarProps) {
+//   return (
+//     <AppBar>
+//       <Toolbar>
+//         <img src={logo} width={22} css={css`border-radius: 50%;`} />
+//         <span css={css`margin-left: 4px; font-size: 16px;`}>0x9c8F</span>
+
+//         <Search>
+//           <SearchIconWrapper>
+//             <SearchIcon />
+//           </SearchIconWrapper>
+//           <StyledInputBase placeholder="Search…" value={word} onChange={e => setWord && setWord(e.target.value)} />
+//         </Search>
+
+//         <Tooltip title="Logout">
+//           <IconButton color="inherit" onClick={() => toLogout()}>
+//             <img src={logout} width={20} />
+//           </IconButton>
+//         </Tooltip>
+//       </Toolbar>
+//     </AppBar>
+//   )
+// }
+
 export default function Navbar({ word, setWord, toLogout }: NavbarProps) {
+  const history = useHistory();
+
   return (
-    <AppBar>
-      <Toolbar>
-        <img src={logo} width={22} css={css`border-radius: 50%;`} />
-        <span css={css`margin-left: 4px; font-size: 16px;`}>0x9c8F...</span>
-      
-        <Search>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase placeholder="Search…" value={word} onChange={e => setWord && setWord(e.target.value)} />
-        </Search>
-        
+    <div css={styles.navbar}>
+      <div css={styles.leftWrapper}>
+        <img src={logo} />
+        <span>0x9c8F</span>
+      </div>
+
+      <Search>
+        <SearchIconWrapper>
+          <SearchIcon />
+        </SearchIconWrapper>
+        <StyledInputBase
+          placeholder="Search…"
+          value={word}
+          onChange={(e) => setWord && setWord(e.target.value)}
+        />
+      </Search>
+      <div css={styles.rightWrapper}>
+        {/* <Tooltip title="Add Text Block">
+          <IconButton onClick={() => history.push('/add')}>
+            <img src={edit} width={18} />
+          </IconButton>
+        </Tooltip> */}
         <Tooltip title="Logout">
-          <IconButton color="inherit" onClick={() => toLogout()}>
+          <IconButton onClick={() => toLogout()}>
             <img src={logout} width={20} />
           </IconButton>
         </Tooltip>
-      </Toolbar>
-    </AppBar>
-  )
+      </div>
+    </div>
+  );
 }
+
+export const styles = {
+  navbar: css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgb(239, 239, 239);
+    padding: 0 10px;
+    height: 50px;
+  `,
+  leftWrapper: css`
+    display: flex;
+    align-items: center;
+
+    span {
+      font-size: 15px;
+      margin-left: 8px;
+    }
+
+    img {
+      width: 22px;
+      margin-left: 2px;
+    }
+  `,
+  rightWrapper: css``,
+};

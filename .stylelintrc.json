@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-prettier",
+    "stylelint-config-recess-order"
+  ],
+  "plugins": ["stylelint-declaration-block-no-ignored-properties", "stylelint-scss"],
+  "rules": {
+    "comment-empty-line-before": null,
+    "function-name-case": "lower",
+    "no-invalid-double-slash-comments": null,
+    "no-descending-specificity": null,
+    "declaration-empty-line-before": null
+  },
+  "ignoreFiles": ["node_modules/**/*", "extension/**/*", "public/**/*", "**/*.d.ts", "src/options/views/Search/Result.css"]
+}

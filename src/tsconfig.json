@@ -37,7 +37,7 @@
             "utils/*": ["src/utils/*"],
         },
 
-        // allow VSCode to show errors
+        // 下面这些选项对 babel 编译 TypeScript 没有作用但是可以让 VSCode 等编辑器正确提示错误
         "target": "ES2020",
         "module": "ESNext",
         "jsxImportSource": "@emotion/react",

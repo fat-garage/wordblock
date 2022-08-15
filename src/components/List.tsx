@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 import { css } from '@emotion/react';
-import SendIcon from '@mui/icons-material/Send';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import EditLocationAltOutlinedIcon from '@mui/icons-material/EditLocationAltOutlined';
-import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import Pagination from '@mui/material/Pagination';
 import { WordData, WordDataType } from '../utils/types';
 import { getData, removeData } from '../utils/storage';
+import { getBlockName } from '../utils/utils';
 import empty from '../assets/img/empty.png';
 import logo from '../assets/img/logo.png';
 import close from '../assets/img/close.png';
@@ -21,7 +21,8 @@ import remove from '../assets/img/remove.png';
 import send from '../assets/img/send.png';
 import copy from '../assets/img/copy.png';
 import edit from '../assets/img/edit.png';
-
+import view from '../assets/img/view.png';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 interface Props {
   styles?: any;
@@ -41,6 +42,17 @@ export default function List(props: Props) {
   const [showDetail, setShowDetail] = useState(false);
   const [current, setCurrent] = useState<WordData>(null);
   const open = Boolean(anchorEl);
+  const [group, setGroup] = useState('favorite');
+  const history = useHistory();
+  const location = useLocation();
+
+  
+  useEffect(() => {
+  // @ts-ignore
+    if (location.state?.from === 'add' && group !== 'created') {
+      setGroup('created')
+    }
+  }, [])
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -51,14 +63,20 @@ export default function List(props: Props) {
 
   useEffect(() => {
     getWordData();
-  }, [props.word])
+  }, [props.word]);
 
   const getWordData = useCallback(async () => {
-    const limit = 3;
-    const { data, total, all } = await getData({ page: page - 1, limit, type: props.type, search: props.word });
+    const limit = 4;
+    const { data, total, all } = await getData({
+      page: page - 1,
+      limit,
+      type: props.type,
+      search: props.word,
+      group,
+    });
     setData(data);
     setTotal(Math.ceil(total / limit));
-  }, [page, props.word]);
+  }, [page, props.word, group]);
 
   useEffect(() => {
     getWordData();
@@ -74,6 +92,10 @@ export default function List(props: Props) {
     setCurrent(item);
     setShowDetail(true);
   };
+
+  const shareToTwitter = (item: WordData) => {
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(item.content));
+  }
 
   const getAction = (item: WordData) => {
     if (props.mode === 'content') {
@@ -96,22 +118,21 @@ export default function List(props: Props) {
           text-align: right;
         `}
       >
-        <Tooltip title="Edit">
-          <IconButton color="primary" component="span">
-            <img src={send} width={20} />
+        <Tooltip title="Share to Twitter">
+          <IconButton color="primary" component="span" onClick={() => shareToTwitter(item)}>
+            <img src={send} width={19} />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Edit">
+        <Tooltip title="View Detail">
           <IconButton color="primary" component="span" onClick={() => handleClickEdit(item)}>
-            <img src={edit} width={17} />
+            <img src={view} width={17} />
           </IconButton>
         </Tooltip>
-
 
         <Tooltip title="Delete">
           <IconButton color="primary" component="span" onClick={() => removeWordData(item)}>
-            <img src={remove} width={20} />
+            <img src={remove} width={19} />
           </IconButton>
         </Tooltip>
       </div>
@@ -139,9 +160,9 @@ export default function List(props: Props) {
           <span>WordBlock</span>
         </div>
         <div css={styles.descItem}>
-            <label>BlockID: </label>
-            <span>{current.id?.slice(0, 18)}...</span>
-          </div>
+          <label>BlockID: </label>
+          <span>{current.id?.slice(0, 18)}...</span>
+        </div>
         <div css={styles.descItem}>
           <label>Date:</label>
           <span>{dayjs(current.create_at).format('YYYY-MM-DD HH:mm')}</span>
@@ -160,7 +181,7 @@ export default function List(props: Props) {
         </div>
         <div css={styles.descItem}>
           <label>Tags: </label>
-          <span>{current.tags}</span>
+          <span>{'#mirror #web3'}</span>
         </div>
         <div css={styles.descItem}>
           <label>Type: </label>
@@ -184,46 +205,34 @@ export default function List(props: Props) {
     }
 
     return (
-      <>
-        <div css={props.styles}>
+      <div>
+        <div>
           {data.map((item) => {
             const word = props.word;
             let content = item.content;
             if (word) {
-              const reg = new RegExp(word, 'g')
-              content = content.replace(reg, `<span class="wordblock_highlight">${word}</span>`)
+              const reg = new RegExp(word, 'ig');
+              const arr = content.match(reg);
+
+              if (arr) {
+                content = content.replace(
+                  arr[0],
+                  `<span class="wordblock_highlight">${arr[0]}</span>`,
+                );
+              }
             }
             return (
               <div key={item.id} css={styles.item}>
-              <div css={styles.textWrapper}>
-                {item.type === 'article' && <img src={bookmark} />}
-                <span dangerouslySetInnerHTML={{ __html: content }}></span>
+                <div css={styles.textWrapper}>
+                  {item.type === 'article' && <img src={bookmark} />}
+                  <span dangerouslySetInnerHTML={{ __html: content }}></span>
+                </div>
+                <div css={styles.descWrapper}>
+                  <span>{getBlockName(item.type)}</span>
+                  {getAction(item)}
+                </div>
               </div>
-              <div css={styles.descWrapper}>
-                <span>{item.type || 'text block'}</span>
-                <span>{dayjs(item.create_at).format('YYYY-MM-DD HH:mm')}</span>
-              </div>
-
-              <div
-                css={css`
-                  display: flex;
-                  align-items: center;
-                `}
-              >
-                {/* <IconButton color="primary" component="span" onClick={handleClick} size="small">
-                  <SendIcon />
-                </IconButton> */}
-                <span css={css`font-size: 13px`}>[{item.tags}]</span>
-
-                {getAction(item)}
-
-                <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                  <MenuItem onClick={handleClose}>Send to Twitter</MenuItem>
-                  <MenuItem onClick={handleClose}>Send to Mirror</MenuItem>
-                </Menu>
-              </div>
-            </div>
-            )
+            );
           })}
         </div>
 
@@ -231,35 +240,72 @@ export default function List(props: Props) {
           css={css`
             display: flex;
             justify-content: center;
-            margin-top: 16px;
+            margin-top: 12px;
           `}
         >
-          <Pagination count={total} color="primary" page={page} onChange={onPageChange} />
+          <Pagination count={total} page={page} onChange={onPageChange} />
         </div>
-      </>
+      </div>
     );
   };
 
   return (
     <>
       {getDetail()}
+      <div css={styles.topBar}>
+        <div css={styles.selectWrapper}>
+          <span
+            css={css`
+              color: ${group === 'favorite' && 'rgb(0, 127, 255)'};
+            `}
+            onClick={() => setGroup('favorite')}
+          >
+            Favorite
+          </span>
+          <span>|</span>
+          <span
+            css={css`
+              color: ${group === 'created' && 'rgb(0, 127, 255)'};
+            `}
+            onClick={() => setGroup('created')}
+          >
+            Created
+          </span>
+        </div>
+
+        <Tooltip title="Add Text Block">
+          <IconButton color="primary" component="span" onClick={() => history.push('/add')}>
+            <img src={edit} width={16} />
+          </IconButton>
+        </Tooltip>
+      </div>
       {getContent()}
     </>
   );
 }
 
 export const styles = {
+  topBar: css`
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e5e5;
+  `,
+  selectWrapper: css`
+    color: #666;
+    span {
+      font-size: 13px;
+      margin-right: 4px;
+      cursor: pointer;
+    }
+  `,
   item: css`
     background: white;
-    box-shadow: rgb(145 158 171 / 16%) 0px 1px 2px 0px;
-    border-radius: 8px;
+    border-bottom: 1px solid #e5e5e5;
     cursor: pointer;
-    padding: 10px 12px 2px;
-    margin-top: 12px;
+    padding: 11px 4px 2px 12px;
     text-align: left;
-    &:hover {
-      box-shadow: rgb(145 158 171 / 16%) 0px 16px 32px -4px;
-    }
   `,
   textWrapper: css`
     color: black;
@@ -278,9 +324,9 @@ export const styles = {
   descWrapper: css`
     color: #969799;
     font-size: 13px;
-    margin-top: 4px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   `,
   emptyWrapper: css`
     width: 100%;
@@ -292,7 +338,7 @@ export const styles = {
     }
   `,
   detailWrapper: css`
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     bottom: 0;

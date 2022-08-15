@@ -7,6 +7,7 @@ import List from '../components/List';
 import defaultStyles from '../utils/defaultStyles';
 import logo from '../assets/img/logo.png';
 import {isLogin, login, logout} from '../utils/storage';
+import SearchBox from '../components/SearchBox'
 
 function App() {
   const [word, setWord] = useState<string>('');
@@ -36,10 +37,8 @@ function App() {
       {
         _isLogin ? (
           <>
-            <Global styles={defaultStyles.global} />   
             <div css={styles.container}>
               <Navbar word={word} setWord={setWord} toLogout={toLogout} />
-
               <List word={word} setWord={setWord} />
             </div>
           </>
@@ -58,21 +57,14 @@ function App() {
 
 const styles = {
   container: css`
-    width: 340px;
-    height: 520px;
-    background: rgba(145, 158, 171, 0.08);
-    margin: 0;
-    padding: 60px 12px 0;
     font-family: Poppins;
     position: relative;
     overflow: hidden;
   `,
   loginWrapper: css`
-    width: 240px;
-    height: 60px;
     display: flex;
     align-items: center;
-    padding: 20px;
+    padding: 200px 40px;
     justify-content: center;
   `,
   loginBtn: css`

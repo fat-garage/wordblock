@@ -120,7 +120,10 @@ const PopoverContent = function ({
               const arr = content.match(reg);
 
               if (arr) {
-                content = content.replace(arr[0], `<span class="wordblock_highlight">${arr[0]}</span>`);
+                content = content.replace(
+                  arr[0],
+                  `<span class="wordblock_highlight">${arr[0]}</span>`,
+                );
               }
             }
 
@@ -152,8 +155,8 @@ const PopoverContent = function ({
               </div>
             );
           })}
-          {
-            data.length ? <div
+          {data.length ? (
+            <div
               css={css`
                 display: flex;
                 justify-content: center;
@@ -161,8 +164,8 @@ const PopoverContent = function ({
               `}
             >
               <Pagination count={total} page={page} onChange={onPageChange} size="small" />
-            </div> : null
-          }
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

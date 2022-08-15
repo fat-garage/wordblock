@@ -16,6 +16,7 @@ import { styled } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
 import reference1 from '../assets/img/reference1.jpeg';
 import reference2 from '../assets/img/reference2.jpeg';
+import message from '../components/Message';
 
 const CustomButton = styled(Button)({
   'text-transform': 'none',
@@ -26,11 +27,13 @@ let currentNode = null;
 let currentData: any = {};
 let lastText = '';
 let type: WordDataType = undefined;
+let currentHoverEl = undefined;
 
 export default function App() {
   const [open, setOpen] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [showReferences, setShowReferences] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const [word, setWord] = useState('');
   const [cursorPosition, setCursorPosition] = useState<any>({});
   const [detailPosition, setDetailPosition] = useState<any>({});
@@ -41,6 +44,8 @@ export default function App() {
         Message({ content: 'Saved to Wordblock Succeessfully' });
       } else if (data.type === 'selectText') {
         Message({ content: 'Please select the text you want to save' });
+      } else if (data.type === 'duplicated') {
+        Message({ content: "Save Fail. The block ID is exist." });
       }
     });
 
@@ -73,6 +78,7 @@ export default function App() {
       });
 
       el.addEventListener('mouseover', (e) => {
+        currentHoverEl = e.target
         let data = getQueryString('wordblock', e.target.href);
         if (!data) {
           return;
@@ -95,7 +101,7 @@ export default function App() {
     currentData = {
       id: 'null',
       content: document.title,
-      author: 'unknown',
+      author: '',
       url: location.href,
       type: 'article'
     }
@@ -111,7 +117,7 @@ export default function App() {
 
   const checkTextbox = () => {
     const timer = setInterval(() => {
-      textbox = document.querySelector('.ProseMirror') || document.querySelector('.css-sgfyjt');
+      textbox = document.querySelector('.ProseMirror') || document.querySelector('.css-1yr7por');
 
       if (!textbox) {
         return;
@@ -143,35 +149,60 @@ export default function App() {
           const li = document.createElement('li');
           ul.appendChild(li);
           const p = document.createElement('p');
-          li.appendChild(p);
-          textbox.removeChild(textbox.firstChild);
-          textbox.replaceChild(ul, textbox.lastChild);
-        }
-
-        if (e.code === 'Space' && currentNode.tagName === 'LI' && !focusNode.textContent.trim()) {
           const a = document.createElement('a');
           const wordblock = {
             url: location.href,
             content: '',
-            author: "mirror",
+            author: (document.querySelector('.css-j79vnj') || document.querySelector('.css-72jcwc')).textContent,
             tags: "web3",
             create_at: Date.now(),
             id: getUUID(),
-            type: "text",
+            type: "parent",
           };
           a.setAttribute('href', `${wordblock.url}#wordblock=${JSON.stringify(wordblock)}`);
 
           const text1 = document.createTextNode('<');
           a.innerText = 'block';
-          const text2 = document.createTextNode(`=>`);
+          const text2 = document.createTextNode(`=`);
+          const text3 = document.createTextNode(`>`);
+          p.appendChild(text1);
+          p.appendChild(a);
+          p.appendChild(text2);
+          p.appendChild(text3);
+          li.appendChild(p);
+          textbox.removeChild(textbox.firstChild);
+          textbox.replaceChild(ul, textbox.lastChild);
+          const selection = window.getSelection();
+          selection.selectAllChildren(textbox);
+          selection.collapse(p, 3);
+        }
+
+        if (e.code === 'Enter' && currentNode.tagName === 'LI' && !focusNode.textContent.trim()) {
+          const a = document.createElement('a');
+          const wordblock = {
+            url: location.href,
+            content: '',
+            author: (document.querySelector('.css-j79vnj') || document.querySelector('.css-72jcwc')).textContent,
+            tags: "web3",
+            create_at: Date.now(),
+            id: getUUID(),
+            type: "parent",
+          };
+          a.setAttribute('href', `${wordblock.url}#wordblock=${JSON.stringify(wordblock)}`);
+
+          const text1 = document.createTextNode('<');
+          a.innerText = 'block';
+          const text2 = document.createTextNode(`=`);
+          const text3 = document.createTextNode(`>`);
+          // focusNode.appendChild(text1);
           focusNode.appendChild(text1);
           focusNode.appendChild(a);
           focusNode.appendChild(text2);
-
-          setTimeout(() => {
-            // @ts-ignore
-            focusNode.innerHTML = focusNode.innerHTML.trim();
-          }, 50)
+          focusNode.appendChild(text3);
+          const selection = window.getSelection();
+          selection.selectAllChildren(textbox);
+          // selection.collapseToEnd();
+          selection.collapse(focusNode, 4);
         }
       });
 
@@ -333,6 +364,21 @@ export default function App() {
     Message({ content: 'Apply Succeessfully' });
   };
 
+  const handleSaveToMyWordblock = () => {
+    let content = currentHoverEl.nextSibling.textContent.split('>')[0].slice(1)
+    if (currentData.type === 'parent') {
+      content = currentHoverEl.parentElement.textContent.replaceAll('<block=', '').replaceAll('>', '').replaceAll('block=', '')
+    }
+    chrome.runtime.sendMessage({
+      type: "SAVE_TO_MY_WORDBLOCK",
+      content,
+      author: currentData.author,
+      id: currentData.id,
+    }, () => {
+        Message({ content: "Save Failed. The block ID is exist." });
+    })
+  }
+
   return (
     <div id="wordblock">
       <Global styles={defaultStyles.global} />
@@ -408,11 +454,11 @@ export default function App() {
               </div>
               <div css={styles.descItem}>
                 <span className="word-label">Comments: </span>
-                <span className="link word-value">5 conversations</span>
+                <span className="link word-value" onClick={() => setShowComments(true)}>5 conversations</span>
               </div>
               <div css={styles.descItem}>
                 <span className="word-label">References: </span>
-                <span className="link word-value" onClick={() => setShowDrawer(true)}>
+                <span className="link word-value" onClick={() => setShowReferences(true)}>
                   3 links
                 </span>
               </div>
@@ -422,7 +468,7 @@ export default function App() {
                   margin-bottom: 8px;
                 `}
               >
-                <CustomButton size="small" disableRipple>
+                <CustomButton size="small" disableRipple onClick={handleSaveToMyWordblock}>
                   Save To My Wordblock
                 </CustomButton>
               </div>
@@ -434,7 +480,7 @@ export default function App() {
       <div css={styles.fixedLogo} onClick={handleClickLogo}>
         <img src={logo} />
       </div>
-      <Drawer anchor={'right'} open={showDrawer} onClose={() => setShowDrawer(false)}>
+      <Drawer anchor={'right'} open={showReferences} onClose={() => setShowReferences(false)}>
         <div css={styles.drawerWrapper}>
           <div css={styles.totalReference}>
             <span css={styles.text}>Total Reference</span>
@@ -466,6 +512,33 @@ export default function App() {
                     OPEN
                   </Button>
                 </div>
+              </div>
+            );
+          })}
+        </div>
+      </Drawer>
+
+      <Drawer anchor={'right'} open={showComments} onClose={() => setShowComments(false)}>
+        <div css={styles.drawerWrapper}>
+          <div css={styles.totalReference}>
+            <span css={styles.text}>Total Comments</span>
+            <span css={styles.count}>5</span>
+          </div>
+
+          {[
+            { icon: reference1, time: '2022-06-27 17:00', content: 'The text looks great for me.' },
+            { icon: reference2, time: '2022-06-26 13:00', content: 'I enjoy it!' },
+            { icon: reference1, time: '2022-06-26 12:00', content: 'Nice text block.' },
+            { icon: reference2, time: '2022-06-23 17:00', content: 'Never to late to learn' },
+            { icon: reference1, time: '2022-06-01 17:00', content: "It's valuable" },
+          ].map((item) => {
+            return (
+              <div css={styles.commentItem}>
+                <div css={styles.avatarWrapper}>
+                  <img src={item.icon} />
+                  <span>{item.content}</span>
+                </div>
+                <div css={styles.commentTime}>{item.time}</div>
               </div>
             );
           })}
@@ -520,8 +593,8 @@ const styles = {
       cursor: pointer;
     }
     .word-label {
-      width: 76px;
-      font-size: 13px;
+      width: 80px;
+      font-size: 12px;
     }
 
 
@@ -603,4 +676,28 @@ const styles = {
     top: 20px;
     right: 10px;
   `,
+  commentItem: css`
+    border-bottom: 1px solid #e5e5e5;
+    position: relative;
+    padding: 12px 16px;
+  `,
+  avatarWrapper: css`
+    display: flex;
+    align-items: center;
+    img {
+      width: 17px;
+      height: 17px;
+      object-fit: cover;
+      margin-right: 8px;
+      border-radius: 50%;
+    }
+
+    span {
+      font-size: 14px;
+    }
+  `,
+  commentTime: css`
+    color: #999;
+    font-size: 13px;
+  `
 };

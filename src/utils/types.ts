@@ -8,4 +8,5 @@ export interface WordData {
   create_at: number;
   id: string;
   type: WordDataType;
+  group: string;
 }

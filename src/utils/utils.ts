@@ -32,3 +32,12 @@ export function removeQueryString(url) {
   );
   return res;
 }
+
+export const getBlockName = (key) => {
+  const cache = {
+    article: "Article",
+    'text block': "Text Block"
+  };
+
+  return cache[key];
+}

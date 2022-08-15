@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom';
 
-import App from './App';
+import routes from './routes';
 
 const root = document.createElement('div');
 root.id = 'root';
 document.body.append(root);
 
-ReactDOM.render(<App />, document.querySelector('#root'));
+ReactDOM.render(<>{routes}</>, document.querySelector('#root'));
