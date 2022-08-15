@@ -1,6 +1,15 @@
-# Wordblock
 
-A web3 note-taking tool built for open and interactive block reference. Everyone can publish user-owned notes (or articles, websites), composed by text cells with wallet signatures (i.e., word blocks).
+<div align="center">
+  
+  # Word Block
+
+
+  <p>A web3 note-taking tool built for open and interactive block reference. Everyone can publish user-owned notes (or articles, websites), composed by text cells with wallet signatures (i.e., word blocks).</p>
+  
+</div>
+
+[中文](https://github.com/fat-garage/word-block/blob/main/README-CN.md) / English  
+
 
 
 ## Introduction
