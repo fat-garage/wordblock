@@ -166,6 +166,17 @@ const PopoverContent = function ({
               <Pagination count={total} page={page} onChange={onPageChange} size="small" />
             </div>
           ) : null}
+          {!word && (
+            <div
+              css={css`
+                color: #666;
+                padding: 12px;
+                margin-top: 1px;
+              `}
+            >
+              Search for block
+            </div>
+          )}
         </div>
       </div>
     </div>

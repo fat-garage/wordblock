@@ -1,3 +1,6 @@
+import { hot } from 'react-hot-loader/root';
+import { useHistory } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
 import { styled, alpha } from '@mui/material/styles';
@@ -9,48 +12,55 @@ import Tooltip from '@mui/material/Tooltip';
 import logo from '../assets/img/logo.png';
 import logout from '../assets/img/logout.png';
 import back from '../assets/img/back.png';
-import { useHistory } from 'react-router-dom';
-import {useState} from 'react';
-import {getData, setData} from '../utils/storage';
-import {getUUID} from '../utils/utils';
+import { getData, setData } from '../utils/storage';
+import { getUUID } from '../utils/utils';
+import { Ceramic } from '../sdk/Ceramic';
+import { WordData } from '../utils/types';
 
-export default function Navbar() {
+function Navbar() {
   const history = useHistory();
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     setLoading(true);
-    const {data} = await getData();
+    const { data } = await getData();
+    const newBlock = {
+      url: 'https://wordblock.xyz/',
+      content: value,
+      author: '0x9c8F',
+      tags: 'web3',
+      create_at: Date.now(),
+      type: 'text block',
+      group: 'created',
+    } as WordData;
 
-    setData([
-      ...data,
+    chrome.runtime.sendMessage(
       {
-          url: 'https://wordblock.xyz/',
-          content: value,
-          author: "0x9c8F",
-          tags: "web3",
-          create_at: Date.now(),
-          id: getUUID(),
-          type: "text block",
-          group: 'created',
-      }
-    ])
-
-    setTimeout(() => {
-      setLoading(false)
-      goBack();
-    }, 500);
-  }
+        type: 'CREATE_BLOCK',
+        content: newBlock,
+      },
+      (res) => {
+        if (res?.code === 0) {
+          newBlock.id = res?.result;
+          setData([...data, newBlock]);
+          setLoading(false);
+          goBack();
+        } else {
+          setLoading(false);
+        }
+      },
+    );
+  };
 
   const goBack = () => {
     history.push({
       pathname: '/',
       state: {
-        from: "add"
-      }
+        from: 'add',
+      },
     });
-  }
+  };
 
   return (
     <div>
@@ -68,11 +78,16 @@ export default function Navbar() {
       </div>
 
       <div css={styles.inputWrapper}>
-        <textarea placeholder="Add your text block ..." rows={12} value={value} onChange={e => setValue(e.target.value)} />
+        <textarea
+          placeholder="Add your text block ..."
+          rows={12}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
       </div>
 
       <div css={styles.submitWrapper}>
-        <Button variant="outlined" size="medium" disabled={!value} onClick={handleSave}>
+        <Button variant="outlined" size="medium" disabled={!value} onClick={() => handleSave()}>
           Save Text Block
         </Button>
       </div>
@@ -117,5 +132,7 @@ export const styles = {
     .MuiButton-root {
       text-transform: none;
     }
-  `
+  `,
 };
+
+export default hot(Navbar);

@@ -9,6 +9,12 @@ export const styles = {
   basicLayout: css`
     width: 340px;
     height: 530px;
+
+    .data-wordblock {
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      cursor: pointer;
+    }
   `,
 };
 

@@ -9,4 +9,5 @@ export interface WordData {
   id: string;
   type: WordDataType;
   group: string;
+  items?: WordData[];
 }

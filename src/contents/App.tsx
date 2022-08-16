@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import { css, Global } from '@emotion/react';
+import dayjs from 'dayjs';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+import Drawer from '@mui/material/Drawer';
+import { container } from 'webpack';
 import Message from '../components/Message';
 import PopoverContent from './PopoverContent';
 import defaultStyles from '../utils/defaultStyles';
@@ -9,13 +14,10 @@ import { WordData, WordDataType } from '../utils/types';
 import logo from '../assets/img/logo.png';
 import { getQueryString, getUUID } from '../utils/utils';
 import close from '../assets/img/close.png';
-import dayjs from 'dayjs';
 import Detail from './Detail';
-import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
-import Drawer from '@mui/material/Drawer';
 import reference1 from '../assets/img/reference1.jpeg';
 import reference2 from '../assets/img/reference2.jpeg';
+import loadingSVG from '../assets/img/loading_gray.svg';
 import message from '../components/Message';
 
 const CustomButton = styled(Button)({
@@ -24,10 +26,10 @@ const CustomButton = styled(Button)({
 
 let textbox = null;
 let currentNode = null;
-let currentData: any = {};
+// let currentData: any = {};
 let lastText = '';
-let type: WordDataType = undefined;
-let currentHoverEl = undefined;
+let type: WordDataType;
+let currentHoverEl;
 
 export default function App() {
   const [open, setOpen] = useState(false);
@@ -37,6 +39,7 @@ export default function App() {
   const [word, setWord] = useState('');
   const [cursorPosition, setCursorPosition] = useState<any>({});
   const [detailPosition, setDetailPosition] = useState<any>({});
+  const [currentData, setCurrentData] = useState<any>({});
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((data) => {
@@ -45,7 +48,9 @@ export default function App() {
       } else if (data.type === 'selectText') {
         Message({ content: 'Please select the text you want to save' });
       } else if (data.type === 'duplicated') {
-        Message({ content: "Save Fail. The block ID is exist." });
+        Message({ content: 'Save Fail. The block ID is exist.' });
+      } else if (data.type === 'notLogin') {
+        Message({ content: 'Please login first' });
       }
     });
 
@@ -78,13 +83,14 @@ export default function App() {
       });
 
       el.addEventListener('mouseover', (e) => {
-        currentHoverEl = e.target
-        let data = getQueryString('wordblock', e.target.href);
+        currentHoverEl = e.target;
+        const data = getQueryString('wordblock', e.target.href);
         if (!data) {
           return;
         }
 
-        currentData = JSON.parse(data);
+        // currentData = JSON.parse(data);
+        setCurrentData(JSON.parse(data));
         const rect = e.target.getBoundingClientRect();
         setDetailPosition({
           left: rect.left,
@@ -98,22 +104,91 @@ export default function App() {
   const handleClickLogo = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    currentData = {
+    // currentData = {
+    //   id: 'null',
+    //   content: document.title,
+    //   author: '',
+    //   url: location.href,
+    //   type: 'article',
+    // };
+    setCurrentData({
       id: 'null',
       content: document.title,
-      author: '',
+      author: 'unknown',
       url: location.href,
-      type: 'article'
-    }
-
+      type: 'article',
+    });
     setDetailPosition({
       left: 200,
-      top: 200
-    })
+      top: 200,
+    });
 
     setShowDetail(true);
-  }
+  };
 
+  const createBlock = ({
+    newBlock,
+    onSuccess,
+    onError,
+  }: {
+    newBlock: {};
+    onSuccess: Function;
+    onError: Function;
+  }) => {
+    chrome.runtime.sendMessage(
+      {
+        type: 'CREATE_BLOCK',
+        content: newBlock,
+      },
+      (res) => {
+        if (res?.code === 0) {
+          onSuccess(res?.result);
+        } else {
+          onError();
+        }
+      },
+    );
+  };
+
+  const checkIsLogin = () =>
+    new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        {
+          type: 'CHECK_IS_LOGIN',
+        },
+        ({ result }) => {
+          resolve(result);
+        },
+      );
+    });
+
+  const reRenderWheel = (func) => {
+    let times = 0;
+    const interval = setInterval(() => {
+      try {
+        func();
+      } catch {}
+      times += 1;
+      if (times === 2) {
+        clearInterval(interval);
+      }
+    }, 1);
+  };
+
+  const buildBlock = (wordblock) => {
+    const a = document.createElement('a');
+    a.setAttribute('href', `${wordblock.url}#wordblock=${JSON.stringify(wordblock)}`);
+    const p = document.createElement('p');
+    const text1 = document.createTextNode('<');
+    a.innerText = 'block';
+    const text2 = document.createTextNode(`=`);
+    const text3 = document.createTextNode(`>`);
+    p.appendChild(text1);
+    p.appendChild(a);
+    p.appendChild(text2);
+    p.appendChild(text3);
+    return p;
+  };
 
   const checkTextbox = () => {
     const timer = setInterval(() => {
@@ -136,7 +211,7 @@ export default function App() {
         });
       });
 
-      textbox.addEventListener('keydown', (e) => {
+      textbox.addEventListener('keydown', async (e) => {
         const selection = getSelection();
         const focusNode = selection.focusNode;
         const currentNode = selection.focusNode.parentElement;
@@ -145,30 +220,51 @@ export default function App() {
         const startOffset = range.startOffset;
 
         if (e.code === 'Enter' && !textbox.textContent) {
+          const res = await checkIsLogin();
+          if (!res) {
+            Message({ content: 'Please login first' });
+            return;
+          }
           const ul = document.createElement('ul');
           const li = document.createElement('li');
           ul.appendChild(li);
-          const p = document.createElement('p');
-          const a = document.createElement('a');
           const wordblock = {
             url: location.href,
             content: '',
-            author: (document.querySelector('.css-j79vnj') || document.querySelector('.css-72jcwc')).textContent,
-            tags: "web3",
+            author: (document.querySelector('.css-j79vnj') || document.querySelector('.css-72jcwc'))
+              .textContent,
+            tags: 'web3',
             create_at: Date.now(),
-            id: getUUID(),
-            type: "parent",
+            id: '',
+            type: 'parent',
           };
-          a.setAttribute('href', `${wordblock.url}#wordblock=${JSON.stringify(wordblock)}`);
 
-          const text1 = document.createTextNode('<');
-          a.innerText = 'block';
-          const text2 = document.createTextNode(`=`);
-          const text3 = document.createTextNode(`>`);
-          p.appendChild(text1);
-          p.appendChild(a);
-          p.appendChild(text2);
-          p.appendChild(text3);
+          createBlock({
+            newBlock: wordblock,
+            onSuccess: (res) => {
+              reRenderWheel(() => {
+                wordblock.id = res;
+                setCurrentData(wordblock);
+                const el = textbox.firstChild.firstChild;
+                const p = buildBlock(wordblock);
+                el.replaceChild(p, el.firstChild);
+                selection.selectAllChildren(textbox);
+                selection.collapse(p, 3);
+              });
+            },
+            onError: () => {
+              reRenderWheel(() => {
+                wordblock.id = getUUID();
+                setCurrentData(wordblock);
+                const el = textbox.firstChild.firstChild;
+                const p = buildBlock(wordblock);
+                el.replaceChild(p, el.firstChild);
+                selection.selectAllChildren(textbox);
+                selection.collapse(p, 3);
+              });
+            },
+          });
+          const p = buildBlock(wordblock);
           li.appendChild(p);
           textbox.removeChild(textbox.firstChild);
           textbox.replaceChild(ul, textbox.lastChild);
@@ -178,18 +274,49 @@ export default function App() {
         }
 
         if (e.code === 'Enter' && currentNode.tagName === 'LI' && !focusNode.textContent.trim()) {
+          const res = await checkIsLogin();
+          if (!res) {
+            Message({ content: 'Please login first' });
+            return;
+          }
           const a = document.createElement('a');
           const wordblock = {
             url: location.href,
             content: '',
-            author: (document.querySelector('.css-j79vnj') || document.querySelector('.css-72jcwc')).textContent,
-            tags: "web3",
+            author: (document.querySelector('.css-j79vnj') || document.querySelector('.css-72jcwc'))
+              .textContent,
+            tags: 'web3',
             create_at: Date.now(),
-            id: getUUID(),
-            type: "parent",
+            id: '',
+            type: 'parent',
           };
           a.setAttribute('href', `${wordblock.url}#wordblock=${JSON.stringify(wordblock)}`);
 
+          createBlock({
+            newBlock: wordblock,
+            onSuccess: (res) => {
+              reRenderWheel(() => {
+                wordblock.id = res;
+                setCurrentData(wordblock);
+                const p = buildBlock(wordblock);
+                const li = document.querySelector('.ProseMirror').firstChild.lastChild;
+                li.replaceChild(p, li.firstChild);
+                selection.selectAllChildren(textbox);
+                selection.collapse(focusNode, 4);
+              });
+            },
+            onError: () => {
+              reRenderWheel(() => {
+                wordblock.id = getUUID();
+                setCurrentData(wordblock);
+                const p = buildBlock(wordblock);
+                const li = document.querySelector('.ProseMirror').firstChild.lastChild;
+                li.replaceChild(p, li.firstChild);
+                selection.selectAllChildren(textbox);
+                selection.collapse(focusNode, 4);
+              });
+            },
+          });
           const text1 = document.createTextNode('<');
           a.innerText = 'block';
           const text2 = document.createTextNode(`=`);
@@ -206,7 +333,7 @@ export default function App() {
         }
       });
 
-      textbox.addEventListener('input', () => {
+      textbox.addEventListener('input', async () => {
         const selection = getSelection();
         const range = selection.getRangeAt(0);
 
@@ -232,8 +359,15 @@ export default function App() {
 
         if (
           textContent.slice(startOffset - 2, startOffset) === '((' &&
-          (!textContent[startOffset] || textContent[startOffset] === ' ' || textContent[startOffset] == '>')
+          (!textContent[startOffset] ||
+            textContent[startOffset] === ' ' ||
+            textContent[startOffset] == '>')
         ) {
+          const res = await checkIsLogin();
+          if (!res) {
+            Message({ content: 'Please login first' });
+            return;
+          }
           // @ts-ignore
           textNode.insertData(startOffset, '))');
           range.setStart(textNode, startOffset);
@@ -251,8 +385,15 @@ export default function App() {
           type = undefined;
         } else if (
           textContent.slice(startOffset - 2, startOffset) === '[[' &&
-          (!textContent[startOffset] || textContent[startOffset] === ' ' || textContent[startOffset] == '>')
+          (!textContent[startOffset] ||
+            textContent[startOffset] === ' ' ||
+            textContent[startOffset] == '>')
         ) {
+          const res = await checkIsLogin();
+          if (!res) {
+            Message({ content: 'Please login first' });
+            return;
+          }
           // @ts-ignore
           textNode.insertData(startOffset, ']]');
           range.setStart(textNode, startOffset);
@@ -306,7 +447,7 @@ export default function App() {
     const p = document.createElement('p');
     const a = document.createElement('a');
     const arrs = currentNode.parentElement.querySelectorAll('a');
-    let oldParent = checkParent(arrs);
+    const oldParent = checkParent(arrs);
 
     const wordblock = {
       ...item,
@@ -337,7 +478,7 @@ export default function App() {
     }
     currentNode.appendChild(p);
     if (arr[1]) {
-      currentNode.innerHTML = currentNode.innerHTML + arr[1];
+      currentNode.innerHTML += arr[1];
     }
 
     if (currentNode.parentElement.tagName != 'LI') {
@@ -350,34 +491,74 @@ export default function App() {
 
     setTimeout(() => {
       if (oldParent) {
-        
-        let data: any = JSON.parse(getQueryString('wordblock', oldParent.href));
-        data.content = data.content + '~' + item.id;
-        
-        const a = currentNode.parentElement.querySelector('a')
+        const data: any = JSON.parse(getQueryString('wordblock', oldParent.href));
+        data.content = `${data.content}~${item.id}`;
+
+        const a = currentNode.parentElement.querySelector('a');
         a.setAttribute('href', `https://wordblock/#wordblock=${JSON.stringify(data)}`);
       }
-    }, 100)
-
+    }, 100);
 
     handleClose();
     Message({ content: 'Apply Succeessfully' });
   };
 
   const handleSaveToMyWordblock = () => {
-    let content = currentHoverEl.nextSibling.textContent.split('>')[0].slice(1)
+    let content = currentHoverEl.nextSibling.textContent.split('>')[0].slice(1);
+    const items = [];
     if (currentData.type === 'parent') {
-      content = currentHoverEl.parentElement.textContent.replaceAll('<block=', '').replaceAll('>', '').replaceAll('block=', '')
+      content = currentHoverEl.parentElement.textContent
+        .replaceAll('<block=', '')
+        .replaceAll('>', '')
+        .replaceAll('block=', '');
+
+      const nodes: any[] = Array.from(currentHoverEl.parentElement.childNodes).slice(2);
+      for (let i = 0; i < nodes.length; i++) {
+        const item = nodes[i];
+        if (!item.tagName) {
+          const arr = item.textContent.split('>');
+
+          if (arr.length === 1) {
+            items.push(arr[0].replaceAll('=', '').replaceAll('<', '').trim());
+          } else {
+            items.push(arr[1].replaceAll('=', '').replaceAll('<', '').trim());
+          }
+        } else {
+          let data: any = getQueryString('wordblock', item.getAttribute('href'));
+
+          if (data) {
+            data = JSON.parse(data);
+          }
+
+          const content = nodes[i + 1].textContent.split('>')[0];
+
+          items.push({
+            ...data,
+            content: content.slice(1),
+          });
+        }
+      }
     }
-    chrome.runtime.sendMessage({
-      type: "SAVE_TO_MY_WORDBLOCK",
-      content,
-      author: currentData.author,
-      id: currentData.id,
-    }, () => {
-        Message({ content: "Save Failed. The block ID is exist." });
-    })
-  }
+    chrome.runtime.sendMessage(
+      {
+        type: 'SAVE_TO_MY_WORDBLOCK',
+        content,
+        author: currentData.author,
+        id: currentData.id,
+        url: location.href,
+        items: items.filter((item) => item),
+      },
+      (data) => {
+        if (data.type === 'saved') {
+          Message({ content: 'Saved to Wordblock Succeessfully' });
+        } else if (data.type === 'selectText') {
+          Message({ content: 'Please select the text you want to save' });
+        } else if (data.type === 'duplicated') {
+          Message({ content: 'Save Failed. The block ID is exist.' });
+        }
+      },
+    );
+  };
 
   return (
     <div id="wordblock">
@@ -399,40 +580,51 @@ export default function App() {
 
       <Detail
         visible={showDetail}
-        style={currentData.id === 'null' ? css`
-          right: 40px;
-          bottom: 103px;
-          top: unset;
-          left: unset;
-        ` : css`
-          top: ${detailPosition.top - 236 > 0
-            ? detailPosition.top - 236
-            : detailPosition.top + 30}px;
-          left: ${detailPosition.left}px;
-        `}
+        style={
+          currentData.id === 'null'
+            ? css`
+                right: 40px;
+                bottom: 103px;
+                top: unset;
+                left: unset;
+              `
+            : css`
+                top: ${detailPosition.top - 236 > 0
+                  ? detailPosition.top - 236
+                  : detailPosition.top + 30}px;
+                left: ${detailPosition.left}px;
+              `
+        }
       >
         <div css={styles.detailWrapper}>
           <div css={styles.descItem}>
             <span className="word-label">BlockID: </span>
-            <span className="word-value">{currentData.id?.slice(0, 18)}{currentData.id !== 'null' && '...'}</span>
+            <span className="word-value">
+              {currentData.id ? (
+                <>
+                  {currentData.id?.slice(0, 18)}
+                  {currentData.id !== 'null' && '...'}
+                </>
+              ) : (
+                <img src={loadingSVG} />
+              )}
+            </span>
           </div>
           <div css={styles.descItem}>
             <span className="word-label">Date:</span>
-            <span className="word-value">{dayjs(currentData.create_at).format('YYYY-MM-DD HH:mm')}</span>
+            <span className="word-value">
+              {dayjs(currentData.create_at).format('YYYY-MM-DD HH:mm')}
+            </span>
           </div>
           {currentData.type === 'ParentBlock' ? (
-            <>
-              <div css={styles.descItem}>
-                <span className="word-label">Children: </span>
-                <div>
-                  {
-                    currentData.content.split('~').map(item => (
-                      <div>{item}...</div>
-                    ))
-                  }
-                </div>
+            <div css={styles.descItem}>
+              <span className="word-label">Children: </span>
+              <div>
+                {currentData.content.split('~').map((item) => (
+                  <div>{item}...</div>
+                ))}
               </div>
-            </>
+            </div>
           ) : (
             <>
               <div css={styles.descItem}>
@@ -454,7 +646,9 @@ export default function App() {
               </div>
               <div css={styles.descItem}>
                 <span className="word-label">Comments: </span>
-                <span className="link word-value" onClick={() => setShowComments(true)}>5 conversations</span>
+                <span className="link word-value" onClick={() => setShowComments(true)}>
+                  5 conversations
+                </span>
               </div>
               <div css={styles.descItem}>
                 <span className="word-label">References: </span>
@@ -480,7 +674,7 @@ export default function App() {
       <div css={styles.fixedLogo} onClick={handleClickLogo}>
         <img src={logo} />
       </div>
-      <Drawer anchor={'right'} open={showReferences} onClose={() => setShowReferences(false)}>
+      <Drawer anchor="right" open={showReferences} onClose={() => setShowReferences(false)}>
         <div css={styles.drawerWrapper}>
           <div css={styles.totalReference}>
             <span css={styles.text}>Total Reference</span>
@@ -491,34 +685,32 @@ export default function App() {
             { icon: reference1, logoText: 'Mirror', title: 'Entries – Dashboard – Mirror' },
             { icon: reference2, logoText: 'Medium', title: 'Entries – Dashboard – Mirror' },
             { icon: reference1, logoText: 'Mirror', title: 'Entries – Dashboard – Mirror' },
-          ].map((item) => {
-            return (
-              <div css={styles.referenceItem}>
-                <div css={styles.referenceItemLogo}>
-                  <img src={item.icon} />
-                  <span>{item.logoText}</span>
-                </div>
-                <div css={styles.referenceItemTitle}>{item.title}</div>
-                <div css={styles.referenceItemButton}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() =>
-                      window.open(
-                        'https://mirror.xyz/0xEc055bA35C0c646E3D31Ee644e33e1a9221f9Fc2/6FngCYBATPQrwAR3hiMMCe2x6G-qa9CMkJhjsImsbuI',
-                      )
-                    }
-                  >
-                    OPEN
-                  </Button>
-                </div>
+          ].map((item) => (
+            <div css={styles.referenceItem}>
+              <div css={styles.referenceItemLogo}>
+                <img src={item.icon} />
+                <span>{item.logoText}</span>
               </div>
-            );
-          })}
+              <div css={styles.referenceItemTitle}>{item.title}</div>
+              <div css={styles.referenceItemButton}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() =>
+                    window.open(
+                      'https://mirror.xyz/0xEc055bA35C0c646E3D31Ee644e33e1a9221f9Fc2/6FngCYBATPQrwAR3hiMMCe2x6G-qa9CMkJhjsImsbuI',
+                    )
+                  }
+                >
+                  OPEN
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
       </Drawer>
 
-      <Drawer anchor={'right'} open={showComments} onClose={() => setShowComments(false)}>
+      <Drawer anchor="right" open={showComments} onClose={() => setShowComments(false)}>
         <div css={styles.drawerWrapper}>
           <div css={styles.totalReference}>
             <span css={styles.text}>Total Comments</span>
@@ -531,17 +723,15 @@ export default function App() {
             { icon: reference1, time: '2022-06-26 12:00', content: 'Nice text block.' },
             { icon: reference2, time: '2022-06-23 17:00', content: 'Never to late to learn' },
             { icon: reference1, time: '2022-06-01 17:00', content: "It's valuable" },
-          ].map((item) => {
-            return (
-              <div css={styles.commentItem}>
-                <div css={styles.avatarWrapper}>
-                  <img src={item.icon} />
-                  <span>{item.content}</span>
-                </div>
-                <div css={styles.commentTime}>{item.time}</div>
+          ].map((item) => (
+            <div css={styles.commentItem}>
+              <div css={styles.avatarWrapper}>
+                <img src={item.icon} />
+                <span>{item.content}</span>
               </div>
-            );
-          })}
+              <div css={styles.commentTime}>{item.time}</div>
+            </div>
+          ))}
         </div>
       </Drawer>
     </div>
@@ -587,6 +777,9 @@ const styles = {
       -webkit-line-clamp: 2; /* 行数*/
       -webkit-box-orient: vertical;
       overflow: hidden;
+      img {
+        width: 16px;
+      }
     }
     .link {
       color: #1976d2;
@@ -596,8 +789,6 @@ const styles = {
       width: 80px;
       font-size: 12px;
     }
-
-
   `,
   close: css`
     width: 20px;
@@ -699,5 +890,5 @@ const styles = {
   commentTime: css`
     color: #999;
     font-size: 13px;
-  `
+  `,
 };

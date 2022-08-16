@@ -164,7 +164,7 @@ const commonConfig: Configuration = {
         ],
       },
       {
-        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
         use: [
           {
             loader: 'url-loader',

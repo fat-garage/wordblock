@@ -1,15 +1,6 @@
+# Wordblock
 
-<div align="center">
-  
-  # Word Block
-
-
-  <p>A web3 note-taking tool built for open and interactive block reference. Everyone can publish user-owned notes (or articles, websites), composed by text cells with wallet signatures (i.e., word blocks).</p>
-  
-</div>
-
-[中文](https://github.com/fat-garage/word-block/blob/main/README-CN.md) / English  
-
+A web3 note-taking tool built for open and interactive block reference. Everyone can publish user-owned notes (or articles, websites), composed by text cells with wallet signatures (i.e., word blocks).
 
 
 ## Introduction
@@ -21,7 +12,7 @@ Use this Chrome extension to experience portable, block-based note-taking backed
 ```sh
 $ git clone https://github.com/fat-garage/wordblock
 $ yarn install
-& yarn build
+$ yarn build
 $ Open chrome://extensions page
 $ Install extension via "Load unpacked"
 ```

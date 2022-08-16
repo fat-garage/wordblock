@@ -43,16 +43,16 @@ export default function List(props: Props) {
   const [current, setCurrent] = useState<WordData>(null);
   const open = Boolean(anchorEl);
   const [group, setGroup] = useState('favorite');
+  const [currentHoverId, setCurrentHoverId] = useState('');
   const history = useHistory();
   const location = useLocation();
 
-  
   useEffect(() => {
-  // @ts-ignore
+    // @ts-ignore
     if (location.state?.from === 'add' && group !== 'created') {
-      setGroup('created')
+      setGroup('created');
     }
-  }, [])
+  }, []);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -95,7 +95,7 @@ export default function List(props: Props) {
 
   const shareToTwitter = (item: WordData) => {
     window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(item.content));
-  }
+  };
 
   const getAction = (item: WordData) => {
     if (props.mode === 'content') {
@@ -116,6 +116,7 @@ export default function List(props: Props) {
         css={css`
           flex: 1;
           text-align: right;
+          visibility: ${item.id === currentHoverId ? 'visible' : 'hidden'};
         `}
       >
         <Tooltip title="Share to Twitter">
@@ -161,7 +162,7 @@ export default function List(props: Props) {
         </div>
         <div css={styles.descItem}>
           <label>BlockID: </label>
-          <span>{current.id?.slice(0, 18)}...</span>
+          <span>{current.id?.slice(0, 18)}</span>
         </div>
         <div css={styles.descItem}>
           <label>Date:</label>
@@ -169,7 +170,7 @@ export default function List(props: Props) {
         </div>
         <div css={styles.descItem}>
           <label>Url: </label>
-          <span>
+          <span className="item-content">
             <a href={current.url} target="_blank" rel="noreferrer">
               {current.url}
             </a>
@@ -189,10 +190,33 @@ export default function List(props: Props) {
         </div>
         <div css={styles.descItem}>
           <label>Content: </label>
-          <span>{current.content}</span>
+          <span className="item-content">
+            {current.items?.length ? (
+              <span>{current.items.map((item) => renderItem(item))}</span>
+            ) : (
+              <span dangerouslySetInnerHTML={{ __html: current.content }}></span>
+            )}
+          </span>
         </div>
       </div>
     );
+  };
+
+  const handleClickWordblock = (item) => {
+    setCurrent(item);
+    setShowDetail(true);
+  };
+
+  const renderItem = (item: any) => {
+    if (typeof item === 'string') {
+      return <span>{item + ' '}</span>;
+    } else {
+      return (
+        <span className="data-wordblock" onClick={() => handleClickWordblock(item)}>
+          {item.content}
+        </span>
+      );
+    }
   };
 
   const getContent = () => {
@@ -210,6 +234,7 @@ export default function List(props: Props) {
           {data.map((item) => {
             const word = props.word;
             let content = item.content;
+            let items = item.items;
             if (word) {
               const reg = new RegExp(word, 'ig');
               const arr = content.match(reg);
@@ -222,10 +247,26 @@ export default function List(props: Props) {
               }
             }
             return (
-              <div key={item.id} css={styles.item}>
+              <div
+                key={item.id}
+                css={css`
+                  ${styles.item}
+                  ${item.id === currentHoverId &&
+                  css`
+                    background-color: #f6f6f6;
+                  `}
+                `}
+                onMouseEnter={() => setCurrentHoverId(item.id)}
+                onMouseLeave={() => setCurrentHoverId('')}
+              >
                 <div css={styles.textWrapper}>
                   {item.type === 'article' && <img src={bookmark} />}
-                  <span dangerouslySetInnerHTML={{ __html: content }}></span>
+
+                  {items?.length ? (
+                    <div>{items.map((item) => renderItem(item))}</div>
+                  ) : (
+                    <span dangerouslySetInnerHTML={{ __html: content }}></span>
+                  )}
                 </div>
                 <div css={styles.descWrapper}>
                   <span>{getBlockName(item.type)}</span>
@@ -366,7 +407,7 @@ export const styles = {
   descItem: css`
     display: flex;
     margin-bottom: 8px;
-    span {
+    .item-content {
       color: #444;
       flex: 1;
       text-overflow: ellipsis;
@@ -377,7 +418,8 @@ export const styles = {
       overflow: hidden;
     }
     label {
-      width: 76px;
+      width: 72px;
+      font-size: 13px;
     }
   `,
   close: css`

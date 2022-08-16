@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import Toolbar from '@mui/material/Toolbar';
 import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
@@ -10,7 +12,8 @@ import Tooltip from '@mui/material/Tooltip';
 import logo from '../assets/img/logo.png';
 import logout from '../assets/img/logout.png';
 import edit from '../assets/img/edit.png';
-import { useHistory } from 'react-router-dom';
+import { isLogin } from '../utils/storage';
+import { Ethereum } from '../sdk/Ethereum';
 
 interface NavbarProps {
   word: string;
@@ -25,7 +28,7 @@ const Search = styled('div')(({ theme }) => ({
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginLeft: 20,
+  marginLeft: 0,
   marginRight: 4,
   width: '100%',
 }));
@@ -38,7 +41,12 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  svg: { transform: 'scale(0.8)' },
 }));
+
+// const SearchIcon = styled('div')(() => ({
+//   transform: 'scale(0.8)',
+// }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
@@ -76,14 +84,60 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Navbar({ word, setWord, toLogout }: NavbarProps) {
   const history = useHistory();
+  const [walletAddress, setWalletAddress] = useState('');
+  const [did, setDid] = useState('');
+  const [hoverWalletAddress, setHoverWalletAddress] = useState(false);
+  useEffect(() => {
+    const ethereum = new Ethereum();
+    ethereum.getWalletAddress().then((data) => {
+      setWalletAddress(data);
+    });
 
+    chrome.runtime.sendMessage(
+      {
+        type: 'GET_PROFILE',
+      },
+      ({ result }) => {
+        if (result) {
+          const { did, address } = result;
+          setWalletAddress(address);
+          setDid(did);
+        }
+      },
+    );
+  });
   return (
     <div css={styles.navbar}>
       <div css={styles.leftWrapper}>
         <img src={logo} />
-        <span>0x9c8F</span>
+        <span
+          onMouseEnter={() => setHoverWalletAddress(true)}
+          onMouseLeave={() => setHoverWalletAddress(false)}
+        >
+          {walletAddress.slice(0, 6)}
+        </span>
       </div>
-
+      <div
+        css={css`
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 50px;
+          background: #00000099;
+          color: #fff;
+          z-index: 1;
+          cursor: default;
+          visibility: ${!hoverWalletAddress && 'hidden'};
+        `}
+        onMouseEnter={() => setHoverWalletAddress(true)}
+        onMouseLeave={() => setHoverWalletAddress(false)}
+      >
+        {did.slice(0, 26)}...{did.slice(-7, did.length)}
+      </div>
       <Search>
         <SearchIconWrapper>
           <SearchIcon />
