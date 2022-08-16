@@ -5,7 +5,7 @@ A web3 note-taking tool built for open and interactive block reference. Everyone
 
 ## Introduction
 
-Use this Chrome extension to experience portable, block-based note-taking backed by authenticated data. You could do block references in your writing (e.g. on [Mirror.xyz](https://mirror.xyz)), not only can you search and refer your own word blocks but also blocks created by anyone with a wallet. Once publish your writing, your publication is no longer a plain text, but interactive, block-chained knowledge graphs with verifiable ownership. See the demo video [here](https://github.com/ownership-labs/wordblock-extension).
+Use this Chrome extension to experience portable, block-based note-taking backed by authenticated data. You could do block references in your writing (e.g. on [Mirror.xyz](https://mirror.xyz/conaw.eth/hBj9GSkYzLpQM524VBVhjO8C5-KQFw9UmfrYkerlvZE)), not only can you search and refer your own word blocks but also blocks created by anyone with a wallet. Once publish your writing, your publication is no longer a plain text, but interactive, block-chained knowledge graphs with verifiable ownership. See the demo video [here](https://www.youtube.com/watch?v=lp3NMGuktZc).
 
 ## Get Started
 
