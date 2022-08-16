@@ -19,8 +19,6 @@ $ Install extension via "Load unpacked"
 
 ## User Story
 
-(+ image/gif)
-
 * You curate any internet text or article into word blocks under your signature, specifically when you take notes or just highlight something while reading. Each block will be automatically assigned with a unique ID and secured on IPFS for public access.
 
 * When you write and publish on Mirror, you are composing your article with multiple blocks, each has its own ID and knowledge. You can write to create new blocks `·` inside your publication, or search to refer `((block))` `[[page]]` existing blocks created by you or others. 
