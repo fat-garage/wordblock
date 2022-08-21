@@ -9,7 +9,7 @@ Use this Chrome extension to experience portable, block-based note-taking backed
 
 ## Get Started
 
-Enviroments:
+Environments:
 - Node version >= 16
 
 ```sh
