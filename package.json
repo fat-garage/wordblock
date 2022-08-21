@@ -48,7 +48,6 @@
     "key-did-provider-ed25519": "^2.0.1",
     "key-did-resolver": "^2.0.5",
     "lodash": "^4.17.21",
-    "web3.storage": "3.4.0",
     "metamask-extension-provider": "3.0.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
@@ -59,6 +58,7 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "styled-system": "^5.1.2",
+    "web3.storage": "3.4.0",
     "webextension-polyfill-ts": "^0.25.0"
   },
   "devDependencies": {
