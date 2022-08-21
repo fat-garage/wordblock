@@ -9,6 +9,9 @@ Use this Chrome extension to experience portable, block-based note-taking backed
 
 ## Get Started
 
+Enviroments:
+- Node version >= 16
+
 ```sh
 $ git clone https://github.com/fat-garage/wordblock
 $ yarn install
