@@ -1,84 +1,90 @@
 declare module 'speed-measure-webpack-plugin' {
-  import { StringDecoder } from 'string_decoder';
-  import { Configuration, Plugin } from 'webpack';
+    import { StringDecoder } from 'string_decoder';
+    import { Configuration, Plugin } from 'webpack';
 
-  interface SpeedMeasurePluginOptions {
-    disable: boolean;
-    outputFormat:
-      | 'json'
-      | 'human'
-      | 'humanVerbose'
-      | ((outputObj: Record<StringDecoder, unknown>) => void);
-    outputTarget: string | ((outputObj: string) => void);
-    pluginNames: Record<StringDecoder, unknown>;
-    granularLoaderData: boolean;
-  }
+    interface SpeedMeasurePluginOptions {
+        disable: boolean;
+        outputFormat:
+            | 'json'
+            | 'human'
+            | 'humanVerbose'
+            | ((outputObj: Record<StringDecoder, unknown>) => void);
+        outputTarget: string | ((outputObj: string) => void);
+        pluginNames: Record<StringDecoder, unknown>;
+        granularLoaderData: boolean;
+    }
 
-  class SpeedMeasurePlugin extends Plugin {
-    constructor(options?: Partial<SpeedMeasurePluginOptions>);
-    wrap(webpackConfig: Configuration): Configuration;
-  }
+    class SpeedMeasurePlugin extends Plugin {
+        constructor(options?: Partial<SpeedMeasurePluginOptions>);
+        wrap(webpackConfig: Configuration): Configuration;
+    }
 
-  export = SpeedMeasurePlugin;
+    export = SpeedMeasurePlugin;
 }
 
 declare module 'antd-dayjs-webpack-plugin' {
-  import { Plugin } from 'webpack';
+    import { Plugin } from 'webpack';
 
-  class WebpackDayjsPlugin extends Plugin {
-    apply(compiler: Compiler): void;
-  }
+    class WebpackDayjsPlugin extends Plugin {
+        apply(compiler: Compiler): void;
+    }
 
-  export = WebpackDayjsPlugin;
+    export = WebpackDayjsPlugin;
 }
 
 declare module 'ssestream' {
-  import { Request } from 'express';
-  import { Transform } from 'stream';
+    import { Request } from 'express';
+    import { Transform } from 'stream';
 
-  class SSEStream extends Transform {
-    constructor(req: Request);
-  }
+    class SSEStream extends Transform {
+        constructor(req: Request);
+    }
 
-  export = SSEStream;
+    export = SSEStream;
 }
 
-declare module '@soda/friendly-errors-webpack-plugin' {
-  import { Plugin, Compiler } from 'webpack';
+declare module '@nuxt/friendly-errors-webpack-plugin' {
+    import type { Plugin, Compiler } from 'webpack';
 
-  declare class FriendlyErrorsWebpackPlugin extends Plugin {
-    constructor(options?: FriendlyErrorsWebpackPlugin.Options);
+    declare class FriendlyErrorsWebpackPlugin extends Plugin {
+        constructor(options?: FriendlyErrorsWebpackPlugin.Options);
 
-    apply(compiler: Compiler): void;
-  }
-
-  declare namespace FriendlyErrorsWebpackPlugin {
-    // eslint-disable-next-line no-shadow
-    enum Severity {
-      Error = 'error',
-      Warning = 'warning',
+        apply(compiler: Compiler): void;
     }
 
-    interface WebpackError {
-      message: string;
-      file: string;
-      origin: string;
-      name: string;
-      severity: Severity;
-      webpackError: any;
+    declare namespace FriendlyErrorsWebpackPlugin {
+        // eslint-disable-next-line no-shadow
+        enum Severity {
+            Error = 'error',
+            Warning = 'warning',
+        }
+
+        interface WebpackError {
+            message: string;
+            file: string;
+            origin: string;
+            name: string;
+            severity: Severity;
+            webpackError: any;
+        }
+
+        interface Options {
+            compilationSuccessInfo?: {
+                messages: string[];
+                notes: string[];
+            };
+            onErrors?(severity: Severity, errors: string): void;
+            clearConsole?: boolean;
+            additionalFormatters?: Array<(errors: WebpackError[], type: Severity) => string[]>;
+            additionalTransformers?: Array<(error: any) => any>;
+        }
     }
 
-    interface Options {
-      compilationSuccessInfo?: {
-        messages: string[];
-        notes: string[];
-      };
-      onErrors?(severity: Severity, errors: string): void;
-      clearConsole?: boolean;
-      additionalFormatters?: Array<(errors: WebpackError[], type: Severity) => string[]>;
-      additionalTransformers?: Array<(error: any) => any>;
-    }
-  }
+    export = FriendlyErrorsWebpackPlugin;
+}
 
-  export = FriendlyErrorsWebpackPlugin;
+declare module '@lukeapage/webpack-hot-middleware' {
+    import webpackHotMiddleware from '@types/webpack-hot-middleware';
+
+    export = webpackHotMiddleware;
 }

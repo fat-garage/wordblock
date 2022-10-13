@@ -1,8 +1,8 @@
 /* eslint-disable react/require-default-props */
 import { css } from '@emotion/react';
 import { ReactNode, useEffect, useRef, useCallback, useState } from 'react';
-import { WordData, WordDataType } from '../utils/types';
-import { getData, removeData } from '../utils/storage';
+import { WordData, WordDataType } from '../../utils/types';
+import { getData, removeData } from '../../utils/storage';
 import Pagination from '@mui/material/Pagination';
 
 interface ModalProps {

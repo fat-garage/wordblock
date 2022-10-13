@@ -1,24 +1,21 @@
 import { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 
 import { css, Global } from '@emotion/react';
 import dayjs from 'dayjs';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
-import { container } from 'webpack';
-import Message from '../components/Message';
+import Message from '../../components/Message';
 import PopoverContent from './PopoverContent';
-import defaultStyles from '../utils/defaultStyles';
-import { WordData, WordDataType } from '../utils/types';
-import logo from '../assets/img/logo.png';
-import { getQueryString, getUUID } from '../utils/utils';
-import close from '../assets/img/close.png';
+import defaultStyles from '../../utils/defaultStyles';
+import { WordData, WordDataType } from '../../utils/types';
+import logo from '../../assets/img/logo.png';
+import { getQueryString, getUUID } from '../../utils/utils';
+import close from '../../assets/img/close.png';
 import Detail from './Detail';
-import reference1 from '../assets/img/reference1.jpeg';
-import reference2 from '../assets/img/reference2.jpeg';
-import loadingSVG from '../assets/img/loading_gray.svg';
-import message from '../components/Message';
+import reference1 from '../../assets/img/reference1.jpeg';
+import reference2 from '../../assets/img/reference2.jpeg';
+import loadingSVG from '../../assets/img/loading_gray.svg';
 
 const CustomButton = styled(Button)({
   'text-transform': 'none',
@@ -31,6 +28,18 @@ let lastText = '';
 let type: WordDataType;
 let currentHoverEl;
 
+chrome.runtime.onMessage.addListener((data) => {
+  if (data.type === 'saved') {
+    Message({ content: 'Saved to Wordblock Succeessfully' });
+  } else if (data.type === 'selectText') {
+    Message({ content: 'Please select the text you want to save' });
+  } else if (data.type === 'duplicated') {
+    Message({ content: 'Save Fail. The block ID is exist.' });
+  } else if (data.type === 'notLogin') {
+    Message({ content: 'Please login first' });
+  }
+});
+
 export default function App() {
   const [open, setOpen] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
@@ -42,18 +51,6 @@ export default function App() {
   const [currentData, setCurrentData] = useState<any>({});
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((data) => {
-      if (data.type === 'saved') {
-        Message({ content: 'Saved to Wordblock Succeessfully' });
-      } else if (data.type === 'selectText') {
-        Message({ content: 'Please select the text you want to save' });
-      } else if (data.type === 'duplicated') {
-        Message({ content: 'Save Fail. The block ID is exist.' });
-      } else if (data.type === 'notLogin') {
-        Message({ content: 'Please login first' });
-      }
-    });
-
     checkTextbox();
 
     document.addEventListener('click', () => {
@@ -135,6 +132,9 @@ export default function App() {
     onSuccess: Function;
     onError: Function;
   }) => {
+    newBlock;
+    onSuccess;
+    onError;
     chrome.runtime.sendMessage(
       {
         type: 'CREATE_BLOCK',
@@ -152,6 +152,7 @@ export default function App() {
 
   const checkIsLogin = () =>
     new Promise((resolve) => {
+      resolve;
       chrome.runtime.sendMessage(
         {
           type: 'CHECK_IS_LOGIN',

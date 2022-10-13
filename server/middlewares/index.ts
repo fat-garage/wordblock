@@ -3,13 +3,13 @@ import { Express } from 'express';
 import cors from 'cors';
 
 import webpackMiddleware from './webpackMiddleware';
-// import extensionAutoReload from './extensionAutoReload';
+import extensionAutoReload from './extensionAutoReload';
 import proxyMiddleware from './proxyMiddleware';
-// import { EXTENSION_AUTO_RELOAD_PATH } from '../utils/constants';
+import { EXTENSION_AUTO_RELOAD_PATH } from '../utils/constants';
 
 export default function setupMiddlewares(devServer: Express, compiler: Compiler): void {
-  proxyMiddleware(devServer);
-  devServer.use(cors());
-  devServer.use(webpackMiddleware(compiler));
-  // devServer.use(EXTENSION_AUTO_RELOAD_PATH, extensionAutoReload(compiler));
+    proxyMiddleware(devServer);
+    devServer.use(cors());
+    devServer.use(webpackMiddleware(compiler));
+    devServer.use(EXTENSION_AUTO_RELOAD_PATH, extensionAutoReload(compiler));
 }

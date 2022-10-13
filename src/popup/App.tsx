@@ -23,7 +23,7 @@ function App() {
   const port = chrome.runtime.connect({
     name: 'popup-name',
   });
-
+  
   port.onMessage.addListener((msg: any) => {
     setLogin(msg.isLogin);
     setLoginLoading(msg.loginLoading);
@@ -35,7 +35,6 @@ function App() {
         type: 'CHECK_IS_LOGIN',
       },
       ({ result: { isLogin, loginLoading } }) => {
-        console.log(isLogin, loginLoading);
         setLogin(isLogin);
         setLoginLoading(loginLoading);
       },

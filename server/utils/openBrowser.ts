@@ -4,17 +4,17 @@ import { Compiler, Stats } from 'webpack';
 import argv from './args';
 
 /**
- * webpack plugin，devServer
+ * 一个 webpack 插件，在第一次编译成功时打开浏览器访问 devServer 首页
  */
 export default function openBrowser(compiler: Compiler): void {
-  const address = argv.open;
-  if (typeof address === 'string') {
-    let hadOpened = false;
-    compiler.hooks.done.tap('open-browser-plugin', async (stats: Stats) => {
-      if (!hadOpened && !stats.hasErrors()) {
-        await open(address);
-        hadOpened = true;
-      }
-    });
-  }
+    const address = argv.open;
+    if (typeof address === 'string') {
+        let hadOpened = false;
+        compiler.hooks.done.tap('open-browser-plugin', async (stats: Stats) => {
+            if (!hadOpened && !stats.hasErrors()) {
+                await open(address);
+                hadOpened = true;
+            }
+        });
+    }
 }
