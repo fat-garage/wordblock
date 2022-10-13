@@ -6,7 +6,7 @@
   "description": "A web3 note-taking tool built for open and interactive block reference",
   "default_locale": "en",
   "minimum_chrome_version": "89",
-  "permissions": ["tabs", "storage", "contextMenus", "activeTab"],
+  "permissions": ["tabs", "storage", "contextMenus"],
   "host_permissions": ["*://*/*", "http://*/*", "https://*/*"],
   "web_accessible_resources": [
     {
