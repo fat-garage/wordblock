@@ -14,9 +14,9 @@ export class Siwe {
       method: 'eth_requestAccounts',
     });
     const authProvider = new EthereumAuthProvider(ethProvider, address);
-
     const session = await DIDSession.authorize(authProvider, {
       resources: [`ceramic://*`],
+      domain: chrome.runtime.id,
     });
     const sessionString = session.serialize();
 

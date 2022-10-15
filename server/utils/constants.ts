@@ -19,13 +19,13 @@ const ENABLE_ANALYZE = argv.analyze;
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
 export {
-  HOST,
-  PORT,
-  PROJECT_ROOT,
-  COPYRIGHT,
-  HRM_PATH,
-  EXTENSION_AUTO_RELOAD_PATH,
-  ENABLE_DEVTOOLS,
-  ENABLE_ANALYZE,
-  __DEV__,
+    HOST,
+    PORT,
+    PROJECT_ROOT,
+    COPYRIGHT,
+    HRM_PATH,
+    EXTENSION_AUTO_RELOAD_PATH,
+    ENABLE_DEVTOOLS,
+    ENABLE_ANALYZE,
+    __DEV__,
 };

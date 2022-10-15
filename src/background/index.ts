@@ -27,23 +27,23 @@ const createBlock = (content) =>
       });
   });
 
-chrome.contextMenus.create(
-  {
-    id: 'wordblock',
-    title: 'Wordblock',
-    visible: true,
-    // contexts: ['selection'],
-    contexts: ['all'],
-    onclick: async () => {
-      console.log('wordblock');
-    },
-  },
-  () => {
-    if (chrome.runtime.lastError) {
-      console.log('create context menu failed! error:', chrome.runtime.lastError);
-    }
-  },
-);
+// chrome.contextMenus.create(
+//   {
+//     id: 'wordblock',
+//     title: 'Wordblock',
+//     visible: true,
+//     // contexts: ['selection'],
+//     contexts: ['all'],
+//     onclick: async () => {
+//       console.log('wordblock');
+//     },
+//   },
+//   () => {
+//     if (chrome.runtime.lastError) {
+//       console.log('create context menu failed! error:', chrome.runtime.lastError);
+//     }
+//   },
+// );
 
 function checkData(v) {
   const entry = { "'": '&apos;', '"': '&quot;', '<': '&lt;', '>': '&gt;' };
@@ -53,15 +53,35 @@ function checkData(v) {
   return v;
 }
 
+function getTabId() {
+  return new Promise<number>((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      resolve(tabs[0].id);
+    });
+  });
+}
+
 chrome.contextMenus.create({
-  parentId: 'wordblock',
+  id: 'wordblock',
   contexts: ['all'],
   title: 'Save Text Block',
-  onclick: async (e, tab) => {
-    const { pageUrl, selectionText } = e;
+});
+
+chrome.contextMenus.create({
+  id: 'wordblock2',
+  contexts: ['all'],
+  title: 'Save Article',
+});
+
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  console.log(info, tab);
+  const { pageUrl, selectionText, menuItemId } = info;
+  const { id, title } = tab;
+  if (menuItemId === 'wordblock') {
     if (selectionText) {
       if (!checkIsLogin()) {
-        chrome.tabs.sendMessage(tab.id!, { type: 'notLogin' });
+        console.log('notLogin');
+        chrome.tabs.sendMessage(id, { type: 'notLogin' });
         return;
       }
       const { data } = await getData();
@@ -75,30 +95,27 @@ chrome.contextMenus.create({
         type: 'text block',
         group: 'favorite',
       } as WordData;
+      console.log(111);
       createBlock(newBlock)
         .then((res) => {
+          console.log(res);
           newBlock.id = res as string;
           setData([...data, newBlock]);
-          chrome.tabs.sendMessage(tab.id!, { type: 'saved' });
+          console.log(id);
+          chrome.tabs.sendMessage(id, { type: 'saved' });
+          console.log(222);
         })
         .catch(() => {
           newBlock.id = getUUID();
           setData([...data, newBlock]);
-          chrome.tabs.sendMessage(tab.id!, { type: 'saved' });
+          chrome.tabs.sendMessage(id, { type: 'saved' });
         });
       return;
     }
-    chrome.tabs.sendMessage(tab.id!, { type: 'selectText' });
-  },
-});
-
-chrome.contextMenus.create({
-  parentId: 'wordblock',
-  contexts: ['all'],
-  title: 'Save Article',
-  onclick: async (e, tab) => {
-    const { pageUrl } = e;
-    const { title } = tab;
+    console.log('aaa',await getTabId(),id);
+    chrome.tabs.sendMessage(await getTabId(), { type: 'selectText' });
+    console.log('bb');
+  } else if (menuItemId === 'wordblock2') {
     if (!checkIsLogin()) {
       chrome.tabs.sendMessage(tab.id!, { type: 'notLogin' });
       return;
@@ -118,14 +135,14 @@ chrome.contextMenus.create({
       .then((res) => {
         newBlock.id = res as string;
         setData([...data, newBlock]);
-        chrome.tabs.sendMessage(tab.id!, { type: 'saved' });
+        chrome.tabs.sendMessage(id, { type: 'saved' });
       })
       .catch(() => {
         newBlock.id = getUUID();
         setData([...data, newBlock]);
-        chrome.tabs.sendMessage(tab.id!, { type: 'saved' });
+        chrome.tabs.sendMessage(id, { type: 'saved' });
       });
-  },
+  }
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -159,7 +176,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     ceramic
       .initCeramic()
       .then((result) => {
-        sendResponse({ code: 0, result });
+        sendResponse({
+          code: 0,
+          result: { sessionString: result.sessionString, walletAddress: result.walletAddress },
+        });
+
         popUpPort?.postMessage({
           isLogin: true,
           loginLoading: false,

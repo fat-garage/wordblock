@@ -19,14 +19,19 @@ export class Ceramic {
 
   async createStream(content: {}) {
     const jsonContent = JSON.stringify(content);
-    const doc = await TileDocument.create(Ceramic.ceramicClient, jsonContent);
-    const streamId = doc.id.toString();
-    console.log({ streamId });
-    return streamId;
+    try {
+      const doc = await TileDocument.create(Ceramic.ceramicClient as any, jsonContent);
+      const streamId = doc.id.toString();
+      return streamId;
+    } catch (error) {
+      console.log(error);
+      return '';
+
+    }
   }
 
   async loadStream(streamId: string) {
-    const doc = await TileDocument.load(Ceramic.ceramicClient, streamId);
+    const doc = await TileDocument.load(Ceramic.ceramicClient as any, streamId);
     return doc.content;
   }
 

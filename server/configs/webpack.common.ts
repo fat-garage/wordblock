@@ -1,16 +1,15 @@
-import { resolve } from 'path';
-import Dotenv from 'dotenv-webpack';
-import webpack, { DefinePlugin, Configuration } from 'webpack';
+// import FriendlyErrorsPlugin from '@nuxt/friendly-errors-webpack-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
-import WebpackBar from 'webpackbar';
-import FriendlyErrorsPlugin from '@soda/friendly-errors-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { Options as HtmlMinifierOptions } from 'html-minifier';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import { resolve } from 'path';
+import { Configuration, ProvidePlugin } from 'webpack';
+import WebpackBar from 'webpackbar';
+import Dotenv from 'dotenv-webpack';
 
+import { __DEV__, PROJECT_ROOT } from '../utils/constants';
 import entry from '../utils/entry';
-import { PROJECT_ROOT, __DEV__, ENABLE_DEVTOOLS } from '../utils/constants';
 
 function getCssLoaders(importLoaders: number) {
   return [
@@ -28,25 +27,11 @@ function getCssLoaders(importLoaders: number) {
   ];
 }
 
-const htmlMinifyOptions: HtmlMinifierOptions = {
-  collapseWhitespace: true,
-  collapseBooleanAttributes: true,
-  collapseInlineTagWhitespace: true,
-  removeComments: true,
-  removeRedundantAttributes: true,
-  removeScriptTypeAttributes: true,
-  removeStyleLinkTypeAttributes: true,
-  minifyCSS: true,
-  minifyJS: true,
-  minifyURLs: true,
-  useShortDoctype: true,
-};
-
 const commonConfig: Configuration = {
   context: PROJECT_ROOT,
   entry,
   watchOptions: {
-    ignored: ['node_modules/**', 'extension/**', 'public/**'],
+    ignored: ['node_modules/**', 'extension/**'],
   },
   output: {
     publicPath: '/',
@@ -57,10 +42,10 @@ const commonConfig: Configuration = {
     hotUpdateMainFilename: 'hot/[runtime].[fullhash].hot-update.json',
   },
   resolve: {
-    modules: [resolve(PROJECT_ROOT, 'src'), 'node_modules'],
     extensions: ['.js', '.ts', '.tsx', '.json'],
     alias: {
-      'react-dom': '@hot-loader/react-dom',
+      '@': resolve(PROJECT_ROOT, 'src'),
+      utils: resolve(PROJECT_ROOT, 'src/utils'),
       styles: resolve(PROJECT_ROOT, 'src/styles'),
     },
     fallback: {
@@ -75,10 +60,24 @@ const commonConfig: Configuration = {
       path: require.resolve('path-browserify'),
       process: require.resolve('process/browser'),
       fs: false,
+      child_process: false,
+      // console: require.resolve('console-browserify'),
+      // constants: require.resolve('constants-browserify'),
+      // domain: require.resolve('domain-browser'),
+      // events: require.resolve('events'),
+      // punycode: require.resolve('punycode'),
+      // querystring: require.resolve('querystring-es3'),
+      // string_decoder: require.resolve('string_decoder'),
+      // sys: require.resolve('util'),
+      // timers: require.resolve('timers-browserify'),
+      // tty: require.resolve('tty-browserify'),
+      // util: require.resolve('util'),
+      // vm: require.resolve('vm-browserify'),
+      // zlib: require.resolve('browserify-zlib'),
     },
   },
   plugins: [
-    new webpack.ProvidePlugin({
+    new ProvidePlugin({
       process: 'process/browser',
       Buffer: ['buffer', 'Buffer'],
     }),
@@ -88,8 +87,14 @@ const commonConfig: Configuration = {
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new CopyPlugin({
       patterns: [
+        // {
+        //   from: resolve(PROJECT_ROOT, 'public'),
+        //   globOptions: {
+        //     ignore: ['**/public/*.html'],
+        //   },
+        // },
         { from: './src/_locales/', to: './_locales' },
-        { from: './src/assets', to: './assets' },
+        { from: './src/assets', to: './images' },
         {
           from: resolve(PROJECT_ROOT, `src/manifest.${__DEV__ ? 'dev' : 'prod'}.json`),
           to: 'manifest.json',
@@ -97,27 +102,24 @@ const commonConfig: Configuration = {
       ],
     }),
     new WebpackBar({
-      name: 'chrome extension',
+      name: 'Building chrome extension',
       color: '#0f9d58',
     }),
-    new FriendlyErrorsPlugin(),
+    // new FriendlyErrorsPlugin(),
     new HtmlWebpackPlugin({
-      minify: __DEV__ ? false : htmlMinifyOptions,
       chunks: ['options'],
       filename: 'options.html',
       title: 'options page',
       // template: resolve(PROJECT_ROOT, 'public/options.html'),
     }),
     new HtmlWebpackPlugin({
-      minify: __DEV__ ? false : htmlMinifyOptions,
       chunks: ['popup'],
       filename: 'popup.html',
       title: 'popup page',
       // template: resolve(PROJECT_ROOT, 'public/popup.html'),
     }),
     new MiniCssExtractPlugin({
-      filename: `css/[name]${__DEV__ ? '' : '.[contenthash]'}.css`,
-      chunkFilename: `css/[id]${__DEV__ ? '' : '.[contenthash]'}.css`,
+      filename: `css/[name].css`,
       ignoreOrder: false,
     }),
   ],
@@ -165,40 +167,30 @@ const commonConfig: Configuration = {
       },
       {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              // limit: 1024 * 10,
-              name: '[name].[contenthash].[ext]',
-              outputPath: 'images',
-            },
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10 * 1024,
           },
-        ],
+        },
+        generator: {
+          filename: 'images/[hash][ext][query]',
+        },
       },
       {
         test: /\.(ttf|woff|woff2|eot|otf)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              name: '[name]-[contenthash].[ext]',
-              outputPath: 'fonts',
-            },
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10 * 1024,
           },
-        ],
+        },
+        generator: {
+          filename: 'fonts/[hash][ext][query]',
+        },
       },
     ],
   },
 };
-
-if (!ENABLE_DEVTOOLS) {
-  commonConfig.plugins!.push(
-    new DefinePlugin({
-      // 移除控制台下载 react devtools 的提示
-      __REACT_DEVTOOLS_GLOBAL_HOOK__: '({ isDisabled: true })',
-    }),
-  );
-}
 
 export default commonConfig;

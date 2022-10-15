@@ -1,46 +1,48 @@
 {
-    "manifest_version": 3,
-    "version": "0.0.1",
-    "name": "__MSG_appName__",
-    "short_name": "__MSG_appShortName__",
-    "description": "__MSG_appDesc__",
-    "default_locale": "en",
-    "minimum_chrome_version": "89",
-    "permissions": [
-        "tabs",
-        "storage",
-        "contextMenus",
-        "*://*/*",
-        "http://*/*",
-        "https://*/*"
-    ],
-    "web_accessible_resources": ["assets/img/*"],
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
-    "background": {
-        "scripts": ["js/background.js"],
-        "persistent": true
-    },
-    "content_scripts": [
-        {
-          "matches": [
-            "<all_urls>"
-          ],
-          "js": [
-            "js/contents.js"
-          ],
-          "run_at": "document_end"
-        }
-      ],
-    "browser_action": {
-        "default_popup": "popup.html"
-    },
-    "options_ui": {
-        "page": "options.html",
-        "open_in_tab": true
-    },
-    "icons": {
-        "16": "assets/img/icon-16x16.png",
-        "48": "assets/img/icon-48x48.png",
-        "128": "assets/img/icon-128x128.png"
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "name": "WordBlock",
+  "short_name": "WB",
+  "description": "A web3 note-taking tool built for open and interactive block reference",
+  "default_locale": "en",
+  "minimum_chrome_version": "89",
+  "permissions": ["tabs", "storage", "contextMenus"],
+  "host_permissions": ["*://*/*", "http://*/*", "https://*/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["images/img/*"],
+      "matches": ["<all_urls>"],
+      "extension_ids": ["fddpnmfnomekiopfkplddiepdjgceaml"]
     }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' http://localhost; object-src 'self';"
+  },
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/vendor.js", "js/all.js"]
+    }
+  ],
+  "action": {
+    "default_icon": {
+      "16": "images/img/icon-16x16.png",
+      "48": "images/img/icon-48x48.png",
+      "128": "images/img/icon-128x128.png"
+    },
+    "default_title": "Word Block Extension",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "images/img/icon-16x16.png",
+    "48": "images/img/icon-48x48.png",
+    "128": "images/img/icon-128x128.png"
+  }
 }
