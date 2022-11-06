@@ -148,6 +148,11 @@ export default function List(props: Props) {
     setShowDetail(false);
   };
 
+  const editWord = () => {
+    (window as any).wordData = current
+    history.push('/add?edit=true')
+  }
+
   const getDetail = () => {
     if (!showDetail) {
       return null;
@@ -182,7 +187,7 @@ export default function List(props: Props) {
         </div>
         <div css={styles.descItem}>
           <label>Tags: </label>
-          <span>{'#mirror #web3'}</span>
+          <span>{current.tags.map(item =>  `#${item} `)}</span>
         </div>
         <div css={styles.descItem}>
           <label>Type: </label>
@@ -193,9 +198,19 @@ export default function List(props: Props) {
           <span className="item-content">
             {current.items?.length ? (
               <span>{current.items.map((item) => renderItem(item))}</span>
-            ) : (
-              <span dangerouslySetInnerHTML={{ __html: current.content }}></span>
-            )}
+            ) : <>
+            
+            <span dangerouslySetInnerHTML={{ __html: current.content }}></span>
+            {
+              current.group === 'created' && <img src={edit} width={15} onClick={editWord} style={{
+                position: "relative",
+                top: 2,
+                left: 6,
+                cursor: "pointer"
+              }} />
+            }
+            </>
+            }
           </span>
         </div>
       </div>
@@ -268,8 +283,12 @@ export default function List(props: Props) {
                     <span dangerouslySetInnerHTML={{ __html: content }}></span>
                   )}
                 </div>
-                <div css={styles.descWrapper}>
+                {/* <div css={styles.dateWrapper}>
                   <span>{getBlockName(item.type)}</span>
+                  <span>{dayjs(item.create_at).format('YYYY-MM-DD HH:mm')}</span>
+                </div> */}
+                <div css={styles.descWrapper}>
+                  <span>{item.tags.map(tag => `#${tag} `)}</span>
                   {getAction(item)}
                 </div>
               </div>
@@ -363,6 +382,13 @@ export const styles = {
     }
   `,
   descWrapper: css`
+    color: #969799;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  `,
+  dateWrapper: css`
     color: #969799;
     font-size: 13px;
     display: flex;

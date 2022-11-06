@@ -58,8 +58,8 @@ const Modal = function ({ children, visible, onCancel, style, name }: ModalProps
         ref={modalEle}
         onClick={(e) => e.stopPropagation()}
         css={css`
-          width: 340px;
-          height: 520px;
+          width: 420px;
+          min-height: 200px;
           background: white;
           border-radius: 8px;
           opacity: ${visible ? '1' : '0'};

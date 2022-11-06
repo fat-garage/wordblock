@@ -16,6 +16,7 @@ import Detail from './Detail';
 import reference1 from '../../assets/img/reference1.jpeg';
 import reference2 from '../../assets/img/reference2.jpeg';
 import loadingSVG from '../../assets/img/loading_gray.svg';
+import SaveWordBlockModal from './SaveWordBlockModal'
 
 const CustomButton = styled(Button)({
   'text-transform': 'none',
@@ -27,18 +28,7 @@ let currentNode = null;
 let lastText = '';
 let type: WordDataType;
 let currentHoverEl;
-
-chrome.runtime.onMessage.addListener((data) => {
-  if (data.type === 'saved') {
-    Message({ content: 'Saved to Wordblock Succeessfully' });
-  } else if (data.type === 'selectText') {
-    Message({ content: 'Please select the text you want to save' });
-  } else if (data.type === 'duplicated') {
-    Message({ content: 'Save Fail. The block ID is exist.' });
-  } else if (data.type === 'notLogin') {
-    Message({ content: 'Please login first' });
-  }
-});
+let blockData = {}
 
 export default function App() {
   const [open, setOpen] = useState(false);
@@ -49,8 +39,25 @@ export default function App() {
   const [cursorPosition, setCursorPosition] = useState<any>({});
   const [detailPosition, setDetailPosition] = useState<any>({});
   const [currentData, setCurrentData] = useState<any>({});
+  const [showSaveWordBlockModal, setShowSaveWordBlockModal] = useState(false);
 
   useEffect(() => {
+    chrome.runtime.onMessage.addListener((data) => {
+      const {type, content} = data;
+      if (type === 'SAVED') {
+        Message({ content: 'Saved to Wordblock Succeessfully' });
+      } else if (type === 'SELECT_TEXT') {
+        Message({ content: 'Please select the text you want to save' });
+      } else if (type === 'DUPLICATED') {
+        Message({ content: 'Save Fail. The block ID is exist.' });
+      } else if (type === 'NOT_LOGIN') {
+        Message({ content: 'Please login first' });
+      } else if (type === 'SAVE_WORD_BLOCK_MODAL') {
+        blockData = data
+        setShowSaveWordBlockModal(true);
+      }
+    });
+
     checkTextbox();
 
     document.addEventListener('click', () => {
@@ -550,12 +557,14 @@ export default function App() {
         items: items.filter((item) => item),
       },
       (data) => {
-        if (data.type === 'saved') {
+        if (data.type === 'SAVED') {
           Message({ content: 'Saved to Wordblock Succeessfully' });
-        } else if (data.type === 'selectText') {
+        } else if (data.type === 'SELECT_TEXT') {
           Message({ content: 'Please select the text you want to save' });
-        } else if (data.type === 'duplicated') {
-          Message({ content: 'Save Failed. The block ID is exist.' });
+        } else if (data.type === 'DUPLICATED') {
+          Message({ content: 'Save Fail. The block ID is exist.' });
+        } else if (data.type === 'NOT_LOGIN') {
+          Message({ content: 'Please login first' });
         }
       },
     );
@@ -735,6 +744,8 @@ export default function App() {
           ))}
         </div>
       </Drawer>
+
+      <SaveWordBlockModal visible={showSaveWordBlockModal} onCancel={() => setShowSaveWordBlockModal(false)} blockData={blockData} />
     </div>
   );
 }

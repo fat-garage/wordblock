@@ -19,6 +19,7 @@ interface NavbarProps {
   word: string;
   setWord: Function;
   toLogout: Function;
+  did: string;
 }
 
 const Search = styled('div')(({ theme }) => ({
@@ -82,15 +83,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 //   )
 // }
 
-export default function Navbar({ word, setWord, toLogout }: NavbarProps) {
+export default function Navbar({ word, setWord, toLogout, did }: NavbarProps) {
   const history = useHistory();
   const [walletAddress, setWalletAddress] = useState('');
-  const [did, setDid] = useState('');
+  // const [did, setDid] = useState('');
   const [hoverWalletAddress, setHoverWalletAddress] = useState(false);
   useEffect(() => {
     const ethereum = new Ethereum();
     ethereum.getWalletAddress().then((data) => {
-      setWalletAddress(data);
+      setWalletAddress(data );
     });
 
     chrome.runtime.sendMessage(
@@ -101,7 +102,7 @@ export default function Navbar({ word, setWord, toLogout }: NavbarProps) {
         if (result) {
           const { did, address } = result;
           setWalletAddress(address);
-          setDid(did);
+          // setDid(did);
         }
       },
     );
@@ -114,7 +115,7 @@ export default function Navbar({ word, setWord, toLogout }: NavbarProps) {
           onMouseEnter={() => setHoverWalletAddress(true)}
           onMouseLeave={() => setHoverWalletAddress(false)}
         >
-          {walletAddress.slice(0, 6)}
+          {did.slice(0, 6)}
         </span>
       </div>
       <div

@@ -15,6 +15,7 @@ function App() {
   const [word, setWord] = useState<string>('');
   const [_isLogin, setLogin] = useState(false);
   const [loginLoading, setLoginLoading] = useState(true);
+  const [did, setDid] = useState("")
 
   useEffect(() => {
     checkLogin();
@@ -34,8 +35,9 @@ function App() {
       {
         type: 'CHECK_IS_LOGIN',
       },
-      ({ result: { isLogin, loginLoading } }) => {
+      ({ result: { isLogin, loginLoading , did} }) => {
         setLogin(isLogin);
+        setDid(did)
         setLoginLoading(loginLoading);
       },
     );
@@ -77,7 +79,7 @@ function App() {
     <div id="wordblock">
       {_isLogin ? (
         <div css={styles.container}>
-          <Navbar word={word} setWord={setWord} toLogout={toLogout} />
+          <Navbar word={word} setWord={setWord} toLogout={toLogout} did={did} />
           <List word={word} setWord={setWord} />
         </div>
       ) : (

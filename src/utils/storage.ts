@@ -31,7 +31,7 @@ export function isLogin() {
   return new Promise((resolve) => {
     chrome.storage.local.get([USER_ID], (result) => {
       console.log(result);
-      resolve(Boolean(result[USER_ID]));
+      resolve(result[USER_ID]);
     });
   });
 }
@@ -56,7 +56,20 @@ export function getData(
       }
 
       if (search) {
-        data = data.filter((item) => item.content.toLowerCase().includes(search.toLowerCase()));
+        if (search.includes('#')) {
+          search = search.replace('#', '')
+          data = data.filter(item => {
+            for (const tag of item.tags) {
+              if (tag.includes(search)) {
+                return true
+              }
+            }
+
+            return false
+          })
+        } else {
+          data = data.filter((item) => item.content.toLowerCase().includes(search.toLowerCase()));
+        }
       }
 
       data = data.filter((item) => {
@@ -74,6 +87,7 @@ export function getData(
         ...item,
         author: item.author || 'unknown',
       }));
+
       resolve({
         data: data.slice(page * limit, page * limit + limit),
         total: data.length,

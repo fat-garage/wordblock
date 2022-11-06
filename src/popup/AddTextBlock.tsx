@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
@@ -16,41 +16,62 @@ import { getData, setData } from '../utils/storage';
 import { getUUID } from '../utils/utils';
 import { Ceramic } from '../sdk/Ceramic';
 import { WordData } from '../utils/types';
+import AddTags from '../components/AddTags';
 
-function Navbar() {
+function AddTextBlock() {
   const history = useHistory();
+  const location = useLocation();
+  const wordData: WordData = (window as any).wordData;
   const [value, setValue] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [tags, setTags] = useState([]);
+  const [isEdit] = useState(Boolean(location.search));
+
+  useEffect(() => {
+    if (wordData && isEdit) {
+      setValue(wordData.content);
+      setTags(wordData.tags);
+    }
+  }, [isEdit, wordData]);
 
   const handleSave = async () => {
-    setLoading(true);
-    const { data } = await getData();
-    const newBlock = {
-      url: 'https://wordblock.xyz/',
-      content: value,
-      author: '0x9c8F',
-      tags: 'web3',
-      create_at: Date.now(),
-      type: 'text block',
-      group: 'created',
-    } as WordData;
+    if (!isEdit) {
+      const newBlock = {
+        url: 'https://wordblock.xyz/',
+        content: value,
+        author: '0x9c8F',
+        tags,
+        create_at: Date.now(),
+        type: 'text block',
+        group: 'created',
+      } as WordData;
 
-    chrome.runtime.sendMessage(
-      {
-        type: 'CREATE_BLOCK',
-        content: newBlock,
-      },
-      (res) => {
-        if (res?.code === 0) {
-          newBlock.id = res?.result;
-          setData([...data, newBlock]);
-          setLoading(false);
+      chrome.runtime.sendMessage(
+        {
+          type: 'CREATE_BLOCK',
+          content: newBlock,
+        },
+        (res) => {
+          if (res?.code === 0) {
+            newBlock.id = res?.result;
+            goBack();
+          }
+        },
+      );
+    } else {
+      chrome.runtime.sendMessage(
+        {
+          type: 'EDIT_BLOCK',
+          content: {
+            ...wordData,
+            content: value,
+            tags,
+          },
+        },
+        () => {
           goBack();
-        } else {
-          setLoading(false);
-        }
-      },
-    );
+        },
+      );
+    }
   };
 
   const goBack = () => {
@@ -72,7 +93,7 @@ function Navbar() {
             </IconButton>
           </Tooltip>
         </div>
-        <div css={styles.middleWrapper}>Created Text Block</div>
+        <div css={styles.middleWrapper}>{isEdit ? 'Edit Text Block' : 'Created Text Block'}</div>
 
         <div css={styles.rightWrapper}></div>
       </div>
@@ -84,6 +105,11 @@ function Navbar() {
           value={value}
           onChange={(e) => setValue(e.target.value)}
         />
+      </div>
+
+      <div css={styles.tagsWrapper}>
+        <div className="wb-label">Tags: </div>
+        <AddTags tags={tags} setTags={setTags} />
       </div>
 
       <div css={styles.submitWrapper}>
@@ -133,6 +159,16 @@ export const styles = {
       text-transform: none;
     }
   `,
+  tagsWrapper: css`
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    .wb-label {
+      margin-right: 8px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+  `,
 };
 
-export default hot(Navbar);
+export default hot(AddTextBlock);

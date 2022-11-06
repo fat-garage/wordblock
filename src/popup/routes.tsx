@@ -7,8 +7,8 @@ import AddTextBlock from './AddTextBlock';
 
 export const styles = {
   basicLayout: css`
-    width: 340px;
-    height: 530px;
+    width: 350px;
+    height: 540px;
 
     .data-wordblock {
       text-decoration: underline;
