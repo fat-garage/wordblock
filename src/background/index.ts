@@ -78,8 +78,14 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   console.log(info, tab);
   const { pageUrl, selectionText, menuItemId } = info;
   const { id, title } = tab;
+  const isLogin = await checkIsLogin();
 
   if (menuItemId === 'wordblock') {
+    if (!isLogin) {
+      chrome.tabs.sendMessage(id, { type: 'NOT_LOGIN' });
+      return;
+    }
+
     if (!selectionText) {
       chrome.tabs.sendMessage(await getTabId(), { type: 'SELECT_TEXT' });
       return;
@@ -91,6 +97,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       blockType: 'text block',
     });
   } else if (menuItemId === 'wordblock2') {
+    if (!isLogin) {
+      chrome.tabs.sendMessage(id, { type: 'NOT_LOGIN' });
+      return;
+    }
+
     chrome.tabs.sendMessage(id, {
       type: 'SAVE_WORD_BLOCK_MODAL',
       content: title,
@@ -224,10 +235,13 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     createBlock(message.content)
       .then((result) => {
         getData().then(({ data }) => {
-          setData([...data, {
-            ...message.content,
-            id: getUUID()
-          }]);
+          setData([
+            ...data,
+            {
+              ...message.content,
+              id: getUUID(),
+            },
+          ]);
           sendResponse({ code: 0, result });
         });
       })
@@ -236,17 +250,17 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       });
   } else if (message.type === 'EDIT_BLOCK') {
     getData().then(({ data }) => {
-      data = data.map(item => {
+      data = data.map((item) => {
         if (item.id === message.content.id) {
           return {
-            ...message.content
-          }
+            ...message.content,
+          };
         }
 
-        return item
-      })
+        return item;
+      });
 
-      setData(data)
+      setData(data);
       sendResponse({ code: 0 });
     });
   } else if (message.type === 'GET_PROFILE') {

@@ -148,7 +148,6 @@ export const styles = {
       width: 100%;
       border: none;
       outline: none;
-      font-family: Poppins;
     }
   `,
   submitWrapper: css`

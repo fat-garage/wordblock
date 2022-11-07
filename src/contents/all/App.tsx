@@ -571,7 +571,7 @@ export default function App() {
   };
 
   return (
-    <div id="wordblock">
+    <div id="wordblock" css={styles.wordblock}>
       <Global styles={defaultStyles.global} />
 
       <PopoverContent
@@ -751,13 +751,15 @@ export default function App() {
 }
 
 const styles = {
+  wordblock: css`
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  `,
   container: css`
     width: 340px;
     height: 100%;
     background: rgba(145, 158, 171, 0.08);
     margin: 0;
     padding: 12px 12px;
-    font-family: Poppins;
     position: relative;
     overflow: hidden;
 

@@ -87,7 +87,6 @@ const PopoverContent = function ({
         visibility: ${visible ? 'visible' : 'hidden'};
         opacity: ${visible ? '1' : '0'};
         transition: opacity 0.15s;
-        font-family: Poppins;
       `}
     >
       <div

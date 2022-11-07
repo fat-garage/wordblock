@@ -57,9 +57,6 @@ export const MessageComp = function (props: MessageProps) {
           dangerouslySetInnerHTML={{
             __html: props.content,
           }}
-          css={css`
-            font-family: Poppins;
-          `}
         />
       </div>
     </div>

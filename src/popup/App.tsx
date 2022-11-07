@@ -76,7 +76,7 @@ function App() {
   };
 
   return (
-    <div id="wordblock">
+    <div id="wordblock" css={styles.wordblock}>
       {_isLogin ? (
         <div css={styles.container}>
           <Navbar word={word} setWord={setWord} toLogout={toLogout} did={did} />
@@ -92,7 +92,7 @@ function App() {
               <div>))</div>
             </div>
             <div className="title">WORD BLOCK</div>
-            <div className="desc">WEB3 NOTE-TAKING TOOL</div>
+            <div className="desc">Your Reference Notebook</div>
             <div className="login">
               {loginLoading ? (
                 <div className="loading" />
@@ -128,8 +128,10 @@ function App() {
 }
 
 const styles = {
+  wordblock: css`
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  `,
   container: css`
-    font-family: Poppins;
     position: relative;
     overflow: hidden;
   `,
@@ -168,7 +170,7 @@ const styles = {
     > .title {
       margin-top: 40px;
       font-size: 30px;
-      font-weight: 800;
+      font-weight: bold;
       -webkit-text-stroke: 1px #000;
     }
     > .desc {

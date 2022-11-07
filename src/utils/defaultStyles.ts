@@ -10,7 +10,6 @@ const styles = {
       padding: 0;
       margin: 0;
       font-size: 14px;
-      font-family: Poppins;
 
       @font-face {
         font-family: Poppins;

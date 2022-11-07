@@ -51,7 +51,6 @@ const Modal = function ({ children, visible, onCancel, style, name }: ModalProps
         background: rgb(1 1 1 / 60%);
         opacity: ${visible ? '1' : '0'};
         transition: opacity 0.15s;
-        font-family: Poppins;
       `}
     >
       <div
