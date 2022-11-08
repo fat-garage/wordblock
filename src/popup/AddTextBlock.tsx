@@ -148,6 +148,7 @@ export const styles = {
       width: 100%;
       border: none;
       outline: none;
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
     }
   `,
   submitWrapper: css`

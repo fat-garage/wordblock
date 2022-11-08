@@ -247,18 +247,35 @@ export default function List(props: Props) {
       <div>
         <div>
           {data.map((item) => {
-            const word = props.word;
+            let word = props.word;
             let content = item.content;
             let items = item.items;
             if (word) {
-              const reg = new RegExp(word, 'ig');
-              const arr = content.match(reg);
+              if (word.includes("#")) {
+                word = word.replace("#", "");
+                const reg = new RegExp(word, 'ig');
+                
+                item.tags = item.tags.map(tag => {
+                  const arr = tag.match(reg);
+                  if (arr) {
+                    tag = tag.replace(
+                      arr[0],
+                      `<span class="wordblock_highlight">${arr[0]}</span>`,
+                    );
+                  }
+                  return tag
+                })
 
-              if (arr) {
-                content = content.replace(
-                  arr[0],
-                  `<span class="wordblock_highlight">${arr[0]}</span>`,
-                );
+              } else {
+                const reg = new RegExp(word, 'ig');
+                const arr = content.match(reg);
+
+                if (arr) {
+                  content = content.replace(
+                    arr[0],
+                    `<span class="wordblock_highlight">${arr[0]}</span>`,
+                  );
+                }
               }
             }
             return (
@@ -288,7 +305,7 @@ export default function List(props: Props) {
                   <span>{dayjs(item.create_at).format('YYYY-MM-DD HH:mm')}</span>
                 </div> */}
                 <div css={styles.descWrapper}>
-                  <span>{item.tags.map(tag => `#${tag} `)}</span>
+                  <span>{item.tags.map(tag => <span dangerouslySetInnerHTML={{ __html: `#${tag} ` }}></span>)}</span>
                   {getAction(item)}
                 </div>
               </div>
@@ -322,7 +339,7 @@ export default function List(props: Props) {
           >
             Favorite
           </span>
-          <span>|</span>
+          <span css={css`margin: 0 4px;`}>|</span>
           <span
             css={css`
               color: ${group === 'created' && 'rgb(0, 127, 255)'};
