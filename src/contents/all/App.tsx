@@ -366,7 +366,7 @@ export default function App() {
         }
 
         if (
-          textContent.slice(startOffset - 2, startOffset) === '((' &&
+          textContent?.slice(startOffset - 2, startOffset) === '((' &&
           (!textContent[startOffset] ||
             textContent[startOffset] === ' ' ||
             textContent[startOffset] == '>')

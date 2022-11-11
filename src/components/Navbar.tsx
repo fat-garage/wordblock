@@ -115,7 +115,7 @@ export default function Navbar({ word, setWord, toLogout, did }: NavbarProps) {
           onMouseEnter={() => setHoverWalletAddress(true)}
           onMouseLeave={() => setHoverWalletAddress(false)}
         >
-          {did.slice(0, 6)}
+          {did?.slice(0, 6)}
         </span>
       </div>
       <div
@@ -137,7 +137,7 @@ export default function Navbar({ word, setWord, toLogout, did }: NavbarProps) {
         onMouseEnter={() => setHoverWalletAddress(true)}
         onMouseLeave={() => setHoverWalletAddress(false)}
       >
-        {did.slice(0, 26)}...{did.slice(-7, did.length)}
+        {did?.slice(0, 26)}...{did?.slice(-7, did.length)}
       </div>
       <Search>
         <SearchIconWrapper>

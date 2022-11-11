@@ -50,7 +50,7 @@ export default function SaveWordBlockModal({visible, onCancel, blockData}: Props
       <div css={styles.contentWrapper}>
         <div className="wb-label">Tags: </div>
         <div className="wb-value">
-          <AddTags tags={tags} setTags={setTags} />
+          <AddTags tags={tags} setTags={setTags} isContent={true} />
         </div>
       </div>
 

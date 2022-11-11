@@ -1,7 +1,7 @@
 import { Ethereum } from '../sdk/Ethereum';
 import { WordData } from '../utils/types';
 import { Ceramic } from '../sdk/Ceramic';
-import { getData, setData, isLogin } from '../utils/storage';
+import { getData, setData, isLogin, getTagTips } from '../utils/storage';
 import { getUUID } from '../utils/utils';
 
 const ceramic = new Ceramic();
@@ -273,6 +273,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         },
       });
     });
+  } else if (message.type === 'GET_TGA_TIPS') {
+    getTagTips(message.word).then(data => {
+      sendResponse({ data });
+    })
   }
 
   return true;

@@ -23,6 +23,7 @@ import copy from '../assets/img/copy.png';
 import edit from '../assets/img/edit.png';
 import view from '../assets/img/view.png';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import edit2 from '../assets/img/edit2.png'
 
 interface Props {
   styles?: any;
@@ -119,6 +120,12 @@ export default function List(props: Props) {
           visibility: ${item.id === currentHoverId ? 'visible' : 'hidden'};
         `}
       >
+        <Tooltip title="Edit Block">
+          <IconButton color="primary" component="span" onClick={() => editWord(item)}>
+            <img src={edit} width={17} />
+          </IconButton>
+        </Tooltip>
+
         <Tooltip title="Share to Twitter">
           <IconButton color="primary" component="span" onClick={() => shareToTwitter(item)}>
             <img src={send} width={19} />
@@ -148,8 +155,8 @@ export default function List(props: Props) {
     setShowDetail(false);
   };
 
-  const editWord = () => {
-    (window as any).wordData = current
+  const editWord = (item?: WordData) => {
+    (window as any).wordData = item || current
     history.push('/add?edit=true')
   }
 
@@ -201,15 +208,13 @@ export default function List(props: Props) {
             ) : <>
             
             <span dangerouslySetInnerHTML={{ __html: current.content }}></span>
-            {
-              current.group === 'created' && <img src={edit} width={15} onClick={editWord} style={{
-                position: "relative",
-                top: 2,
-                left: 6,
-                cursor: "pointer"
-              }} />
-            }
-            </>
+                <img src={edit} width={15} onClick={() => editWord()} style={{
+                  position: "relative",
+                  top: 3,
+                  left: 7,
+                  cursor: "pointer"
+                }} />
+              </>
             }
           </span>
         </div>
@@ -439,7 +444,7 @@ export const styles = {
     align-items: center;
     padding: 20px 0;
     img {
-      width: 36px;
+      width: 34px;
       border-radius: 50%;
     }
     span {
@@ -459,6 +464,7 @@ export const styles = {
       -webkit-line-clamp: 12; /* 行数*/
       -webkit-box-orient: vertical;
       overflow: hidden;
+      line-height: 1.6;
     }
     label {
       width: 72px;

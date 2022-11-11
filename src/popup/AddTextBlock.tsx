@@ -1,6 +1,6 @@
 import { hot } from 'react-hot-loader/root';
 import { useHistory, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
 import { styled, alpha } from '@mui/material/styles';
@@ -25,6 +25,10 @@ function AddTextBlock() {
   const [value, setValue] = useState('');
   const [tags, setTags] = useState([]);
   const [isEdit] = useState(Boolean(location.search));
+
+  const canEditContent = useMemo(() => {
+    return isEdit && wordData.group === 'created'
+  }, [isEdit, wordData])
 
   useEffect(() => {
     if (wordData && isEdit) {
@@ -104,6 +108,7 @@ function AddTextBlock() {
           rows={12}
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          disabled={!canEditContent}
         />
       </div>
 
@@ -142,12 +147,15 @@ export const styles = {
     width: 60px;
   `,
   inputWrapper: css`
-    padding: 8px 8px 8px 12px;
+    padding: 0;
     border-bottom: 1px solid #ebedf0;
     textarea {
+      padding: 12px;
       width: 100%;
       border: none;
       outline: none;
+      font-size: 13px;
+      line-height: 1.5;
       font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
     }
   `,

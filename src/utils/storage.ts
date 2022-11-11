@@ -48,7 +48,6 @@ export function getData(
   return new Promise((resolve) => {
     chrome.storage.local.get([WORD_BLOCK_DATA], (result) => {
       let data: ResponseData['data'] = result[WORD_BLOCK_DATA] || [];
-      console.log(data)
 
       data = data.sort((item1, item2) => item2.create_at - item1.create_at);
       if (type) {
@@ -112,4 +111,24 @@ export async function removeData(data: WordData) {
   chrome.storage.local.set({
     [WORD_BLOCK_DATA]: res,
   });
+}
+
+export async function getTagTips(word: string): Promise<string []> {
+  return new Promise((resolve) => {
+    chrome.storage.local.get([WORD_BLOCK_DATA], (result) => {
+      let data: ResponseData['data'] = result[WORD_BLOCK_DATA] || [];
+  
+      let tags = [];
+  
+      for (const item of data) {
+        for (const tag of item.tags) {
+          if (tag.startsWith(word)) {
+            tags.push(tag)
+          }
+        }
+      }
+
+      resolve(tags)
+    })
+  })
 }
