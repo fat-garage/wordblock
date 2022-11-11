@@ -65,7 +65,6 @@ export default function AddTags({ tags, setTags, isContent }: Props) {
           word: val
         },
         ({data}) => {
-          console.log(tips)
           setTips(data)
         },
       );

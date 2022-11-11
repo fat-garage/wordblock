@@ -128,7 +128,7 @@ export async function getTagTips(word: string): Promise<string []> {
         }
       }
 
-      resolve(tags)
+      resolve(Array.from(new Set([...tags])));
     })
   })
 }

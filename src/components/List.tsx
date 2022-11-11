@@ -103,8 +103,8 @@ export default function List(props: Props) {
       return (
         <div
           css={css`
-            flex: 1;
             text-align: right;
+            flex-shrink: 0;
           `}
         >
           <Button onClick={() => props.onApply(item)}>Apply</Button>
@@ -310,7 +310,7 @@ export default function List(props: Props) {
                   <span>{dayjs(item.create_at).format('YYYY-MM-DD HH:mm')}</span>
                 </div> */}
                 <div css={styles.descWrapper}>
-                  <span>{item.tags.map(tag => <span dangerouslySetInnerHTML={{ __html: `#${tag} ` }}></span>)}</span>
+                  <span css={styles.tagsWrapper}>{item.tags.map(tag => <span dangerouslySetInnerHTML={{ __html: `#${tag} ` }}></span>)}</span>
                   {getAction(item)}
                 </div>
               </div>
@@ -409,6 +409,12 @@ export const styles = {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  `,
+  tagsWrapper: css`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
   `,
   dateWrapper: css`
     color: #969799;

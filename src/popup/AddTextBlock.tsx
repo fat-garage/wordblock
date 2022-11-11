@@ -27,7 +27,7 @@ function AddTextBlock() {
   const [isEdit] = useState(Boolean(location.search));
 
   const canEditContent = useMemo(() => {
-    return isEdit && wordData.group === 'created'
+    return isEdit && wordData.group === 'created' || !isEdit
   }, [isEdit, wordData])
 
   useEffect(() => {
