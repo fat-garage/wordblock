@@ -194,6 +194,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
             type: message.blockType || 'text block',
             group: 'favorite',
             items: message.items || [],
+            status: message.status
           },
         ]);
         sendResponse({ type: 'SAVED' });

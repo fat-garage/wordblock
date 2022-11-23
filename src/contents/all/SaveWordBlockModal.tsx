@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import {useState, useRef, useEffect} from 'react';
 import Message from '../../components/Message';
 import AddTags from '../../components/AddTags';
+import EmojiStatus from '../../components/EmojiStatus'
 
 interface Props {
   visible: boolean;
@@ -13,6 +14,7 @@ interface Props {
 
 export default function SaveWordBlockModal({visible, onCancel, blockData}: Props) {
   const [tags, setTags] = useState([]);
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     setTags([]);
@@ -26,7 +28,8 @@ export default function SaveWordBlockModal({visible, onCancel, blockData}: Props
         author: "Unknown",
         url: location.href,
         blockType: blockData.blockType,
-        tags
+        tags,
+        status
       },
       (data) => {
         if (data.type === 'SAVED') {
@@ -54,6 +57,13 @@ export default function SaveWordBlockModal({visible, onCancel, blockData}: Props
         </div>
       </div>
 
+      <div css={styles.contentWrapper} style={{alignItems: 'center'}}>
+        <div className="wb-label">Status: </div>
+        <div className="wb-value">
+          <EmojiStatus status={status} setStatus={setStatus} addVisible={visible} />
+        </div>
+      </div>
+
       <div css={styles.saveBtn} onClick={handleSave}>Save Text Block</div>
     </Modal>
   )
@@ -71,6 +81,8 @@ export const styles = {
     letter-spacing: 0.02rem;
     font-weight: 800;
     -webkit-text-stroke: 0.01px #000;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
   `,
   contentWrapper: css`
     display: flex;

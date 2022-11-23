@@ -64,7 +64,6 @@ const Modal = function ({ children, visible, onCancel, style, name }: ModalProps
           opacity: ${visible ? '1' : '0'};
           transition: all 0.3s;
           transform: ${visible ? 'scale(1)' : 'scale(0.3)'};
-          overflow: hidden;
           ${style};
         `}
       >

@@ -56,10 +56,10 @@ export function getData(
 
       if (search) {
         if (search.includes('#')) {
-          search = search.replace('#', '')
+          search = search.replace('#', '').toLowerCase()
           data = data.filter(item => {
             for (const tag of item.tags) {
-              if (tag.includes(search)) {
+              if (tag.toLowerCase().includes(search)) {
                 return true
               }
             }

@@ -9,9 +9,7 @@ import Message from '../../components/Message';
 import PopoverContent from './PopoverContent';
 import defaultStyles from '../../utils/defaultStyles';
 import { WordData, WordDataType } from '../../utils/types';
-import logo from '../../assets/img/logo.png';
 import { getQueryString, getUUID } from '../../utils/utils';
-import close from '../../assets/img/close.png';
 import Detail from './Detail';
 import reference1 from '../../assets/img/reference1.jpeg';
 import reference2 from '../../assets/img/reference2.jpeg';
@@ -681,9 +679,6 @@ export default function App() {
         </div>
       </Detail>
 
-      <div css={styles.fixedLogo} onClick={handleClickLogo}>
-        <img src={logo} />
-      </div>
       <Drawer anchor="right" open={showReferences} onClose={() => setShowReferences(false)}>
         <div css={styles.drawerWrapper}>
           <div css={styles.totalReference}>

@@ -17,6 +17,7 @@ import { getUUID } from '../utils/utils';
 import { Ceramic } from '../sdk/Ceramic';
 import { WordData } from '../utils/types';
 import AddTags from '../components/AddTags';
+import EmojiStatus from '../components/EmojiStatus'
 
 function AddTextBlock() {
   const history = useHistory();
@@ -24,6 +25,7 @@ function AddTextBlock() {
   const wordData: WordData = (window as any).wordData;
   const [value, setValue] = useState('');
   const [tags, setTags] = useState([]);
+  const [status, setStatus] = useState("");
   const [isEdit] = useState(Boolean(location.search));
 
   const canEditContent = useMemo(() => {
@@ -34,6 +36,7 @@ function AddTextBlock() {
     if (wordData && isEdit) {
       setValue(wordData.content);
       setTags(wordData.tags);
+      setStatus(wordData.status);
     }
   }, [isEdit, wordData]);
 
@@ -69,6 +72,7 @@ function AddTextBlock() {
             ...wordData,
             content: value,
             tags,
+            status
           },
         },
         () => {
@@ -81,9 +85,9 @@ function AddTextBlock() {
   const goBack = () => {
     history.push({
       pathname: '/',
-      state: {
-        from: 'add',
-      },
+      // state: {
+      //   from: 'add',
+      // },
     });
   };
 
@@ -115,6 +119,11 @@ function AddTextBlock() {
       <div css={styles.tagsWrapper}>
         <div className="wb-label">Tags: </div>
         <AddTags tags={tags} setTags={setTags} />
+      </div>
+
+      <div css={styles.tagsWrapper} style={{paddingTop: "4px"}}>
+        <div className="wb-label">Status: </div>
+        <EmojiStatus status={status} setStatus={setStatus} />
       </div>
 
       <div css={styles.submitWrapper}>

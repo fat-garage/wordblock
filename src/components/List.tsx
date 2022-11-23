@@ -67,7 +67,7 @@ export default function List(props: Props) {
   }, [props.word]);
 
   const getWordData = useCallback(async () => {
-    const limit = 4;
+    const limit = 5;
     const { data, total, all } = await getData({
       page: page - 1,
       limit,
@@ -115,32 +115,33 @@ export default function List(props: Props) {
     return (
       <div
         css={css`
-          flex: 1;
+          width: 140px;
           text-align: right;
+          flex-shrink: 0;
           visibility: ${item.id === currentHoverId ? 'visible' : 'hidden'};
         `}
       >
         <Tooltip title="Edit Block">
           <IconButton color="primary" component="span" onClick={() => editWord(item)}>
-            <img src={edit} width={17} />
+            <img src={edit} width={15} />
           </IconButton>
         </Tooltip>
 
         <Tooltip title="Share to Twitter">
           <IconButton color="primary" component="span" onClick={() => shareToTwitter(item)}>
-            <img src={send} width={19} />
+            <img src={send} width={17} />
           </IconButton>
         </Tooltip>
 
         <Tooltip title="View Detail">
           <IconButton color="primary" component="span" onClick={() => handleClickEdit(item)}>
-            <img src={view} width={17} />
+            <img src={view} width={15} />
           </IconButton>
         </Tooltip>
 
         <Tooltip title="Delete">
           <IconButton color="primary" component="span" onClick={() => removeWordData(item)}>
-            <img src={remove} width={19} />
+            <img src={remove} width={17} />
           </IconButton>
         </Tooltip>
       </div>
@@ -297,13 +298,9 @@ export default function List(props: Props) {
                 onMouseLeave={() => setCurrentHoverId('')}
               >
                 <div css={styles.textWrapper}>
-                  {item.type === 'article' && <img src={bookmark} />}
-
-                  {items?.length ? (
-                    <div>{items.map((item) => renderItem(item))}</div>
-                  ) : (
-                    <span dangerouslySetInnerHTML={{ __html: content }}></span>
-                  )}
+                  {/* {item.type === 'article' && <img src={bookmark} />} */}
+                  {item.status && <span style={{marginRight: '4px', fontSize: '15px'}}>{item.status}</span>}
+                  <span dangerouslySetInnerHTML={{ __html: content }}></span>
                 </div>
                 {/* <div css={styles.dateWrapper}>
                   <span>{getBlockName(item.type)}</span>
@@ -322,7 +319,7 @@ export default function List(props: Props) {
           css={css`
             display: flex;
             justify-content: center;
-            margin-top: 12px;
+            margin-top: 8px;
           `}
         >
           <Pagination count={total} page={page} onChange={onPageChange} />
@@ -386,7 +383,7 @@ export const styles = {
     background: white;
     border-bottom: 1px solid #e5e5e5;
     cursor: pointer;
-    padding: 11px 4px 2px 12px;
+    padding: 10px 4px 2px 10px;
     text-align: left;
   `,
   textWrapper: css`
@@ -405,8 +402,9 @@ export const styles = {
   `,
   descWrapper: css`
     color: #969799;
-    font-size: 13px;
+    font-size: 12px;
     display: flex;
+    margin-top: 1px;
     justify-content: space-between;
     align-items: center;
   `,

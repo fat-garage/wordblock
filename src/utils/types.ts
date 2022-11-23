@@ -10,4 +10,6 @@ export interface WordData {
   type: WordDataType;
   group: string;
   items?: WordData[];
+  status?: string;
+  note?: string;
 }

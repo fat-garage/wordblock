@@ -62,6 +62,7 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "styled-system": "^5.1.2",
+    "twemoji": "^14.0.2",
     "web3.storage": "3.4.0",
     "webextension-polyfill-ts": "^0.25.0"
   },
