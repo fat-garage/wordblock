@@ -198,6 +198,14 @@ export default function List(props: Props) {
           <span>{current.tags.map(item =>  `#${item} `)}</span>
         </div>
         <div css={styles.descItem}>
+          <label>Status: </label>
+          <span>{current.status}</span>
+        </div>
+        <div css={styles.descItem}>
+          <label>Note: </label>
+          <span>{current.note}</span>
+        </div>
+        <div css={styles.descItem}>
           <label>Type: </label>
           <span>{current.type || 'text block'}</span>
         </div>
@@ -446,7 +454,7 @@ export const styles = {
   logoWrapper: css`
     display: flex;
     align-items: center;
-    padding: 20px 0;
+    padding: 16px 0 12px;
     img {
       width: 34px;
       border-radius: 50%;

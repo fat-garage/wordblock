@@ -15,6 +15,7 @@ interface Props {
 export default function SaveWordBlockModal({visible, onCancel, blockData}: Props) {
   const [tags, setTags] = useState([]);
   const [status, setStatus] = useState("");
+  const [note, setNote] = useState("")
 
   useEffect(() => {
     setTags([]);
@@ -29,7 +30,8 @@ export default function SaveWordBlockModal({visible, onCancel, blockData}: Props
         url: location.href,
         blockType: blockData.blockType,
         tags,
-        status
+        status,
+        note,
       },
       (data) => {
         if (data.type === 'SAVED') {
@@ -64,6 +66,13 @@ export default function SaveWordBlockModal({visible, onCancel, blockData}: Props
         </div>
       </div>
 
+      <div css={styles.contentWrapper} style={{alignItems: 'center'}}>
+        <div className="wb-label">Note: </div>
+        <div className="wb-value">
+          <input value={note} onChange={(e) => setNote(e.target.value)} />
+        </div>
+      </div>
+
       <div css={styles.saveBtn} onClick={handleSave}>Save Text Block</div>
     </Modal>
   )
@@ -87,7 +96,7 @@ export const styles = {
   contentWrapper: css`
     display: flex;
     align-items: flex-start;
-    margin-top: 20px;
+    margin-top: 16px;
     padding: 0 20px;
 
     .wb-label {
@@ -97,6 +106,13 @@ export const styles = {
 
     .wb-value {
       flex: 1;
+
+      input {
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        padding-left: 6px;
+        height: 32px;
+      }
     }
   `,
   saveBtn: css`

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { css } from '@emotion/react';
 import {getTagTips} from '../utils/storage'
+import { css } from '@emotion/react';
 
 interface Props {
   tags: string[];
@@ -10,23 +10,47 @@ interface Props {
 
 export default function AddTags({ tags, setTags, isContent }: Props) {
   const [inputVisible, setInputVisible] = useState(false);
+  const [editInitialValue, setEditInitialValue] = useState('');
   const inputRef = useRef(null);
-  const [value, setValue] = useState("");
-  const [tips, setTips] = useState([])
+  const editRef = useRef(null);
+  const [value, setValue] = useState('');
+  const [editValue, setEditValue] = useState('');
+  const [tips, setTips] = useState([]);
 
   useEffect(() => {
     if (inputVisible) {
       inputRef.current.focus();
     }
-    setValue("")
-    setTips([])
-  }, [inputVisible]);
+
+    if (editInitialValue) {
+      editRef.current.focus();
+    }
+    setValue('');
+    setEditValue(editInitialValue);
+    setTips([]);
+  }, [inputVisible, editInitialValue]);
 
   const handleKeyup = (e: any) => {
     if (e.code === 'Enter') {
       if (e.target.value) {
         setTags(Array.from(new Set([...tags, e.target.value])));
         setInputVisible(false);
+      }
+    }
+  };
+
+  const handleEditKeyup = (e: any) => {
+    if (e.code === 'Enter') {
+      if (e.target.value) {
+        const _tags = tags.map((tag) => {
+          if (tag === editInitialValue) {
+            return e.target.value;
+          }
+
+          return tag;
+        });
+        setTags(Array.from(new Set([..._tags])));
+        setEditInitialValue('');
       }
     }
   };
@@ -42,19 +66,31 @@ export default function AddTags({ tags, setTags, isContent }: Props) {
   const selectTip = (tag: string) => {
     setTags(Array.from(new Set([...tags, tag])));
     setInputVisible(false);
+  };
+
+  const selectEditTip = (tag: string, index: number) => {
+    const _tags = [...tags];
+
+    _tags.splice(index, 1, tag)
+    setTags(Array.from(new Set([..._tags])));
+    setEditInitialValue("");
+    setInputVisible(false);
   }
 
   const handleBlur = () => {
-    setTimeout(()=> {
-      setInputVisible(false)
-    }, 100)
-  }
+    setTimeout(() => {
+      setInputVisible(false);
+      setEditInitialValue('');
+    }, 100);
+  };
 
   const handleChange = async (e) => {
     const val = e.target.value;
-    setValue(val)
+    setValue(val);
+    setEditValue(val);
+
     if (!val) {
-      setTips([])
+      setTips([]);
       return;
     }
 
@@ -62,42 +98,75 @@ export default function AddTags({ tags, setTags, isContent }: Props) {
       chrome.runtime.sendMessage(
         {
           type: 'GET_TGA_TIPS',
-          word: val
+          word: val,
         },
-        ({data}) => {
-          setTips(data)
+        ({ data }) => {
+          setTips(data);
         },
       );
     } else {
       const tips = await getTagTips(val);
-      setTips(tips)
+      setTips(tips);
     }
-
-  }
+  };
 
   return (
     <div css={styles.addTags}>
-      {tags.map((tag) => (
-        <div className="wb-tag">
-          {tag}{' '}
-          <span className="wb-remove-tag" onClick={() => removeTag(tag)}>
-            X
-          </span>
-        </div>
-      ))}
+      {tags.map((tag, index) =>
+        editInitialValue === tag ? (
+          <div className="wb-input">
+            <input
+              value={editValue}
+              ref={editRef}
+              onBlur={handleBlur}
+              onKeyUp={handleEditKeyup}
+              onChange={handleChange}
+            />
+            {tips.length > 0 && (
+              <div className="wb-tags-tips">
+                {tips.map((tip) => (
+                  <div className="wb-tips-option" onClick={() => selectEditTip(tip, index)}>
+                    {tip}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="wb-tag">
+            <span
+              onClick={() => {
+                setEditInitialValue(tag);
+                setEditValue(tag);
+              }}
+            >
+              {tag}
+            </span>
+            <span className="wb-remove-tag" onClick={() => removeTag(tag)}>
+              X
+            </span>
+          </div>
+        ),
+      )}
 
       {inputVisible ? (
         <div className="wb-input">
-          <input value={value} ref={inputRef} onBlur={handleBlur} onKeyUp={handleKeyup} onChange={handleChange} />
-          {
-            tips.length > 0 && <div className="wb-tags-tips">
-              {
-                tips.map(tip => (
-                  <div className="wb-tips-option" onClick={() => selectTip(tip)}>{tip}</div>
-                ))
-              }
-          </div>
-          }
+          <input
+            value={value}
+            ref={inputRef}
+            onBlur={handleBlur}
+            onKeyUp={handleKeyup}
+            onChange={handleChange}
+          />
+          {tips.length > 0 && (
+            <div className="wb-tags-tips">
+              {tips.map((tip) => (
+                <div className="wb-tips-option" onClick={() => selectTip(tip)}>
+                  {tip}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <div className="wb-tag wb-add-tag" onClick={() => setInputVisible(true)}>
@@ -132,7 +201,7 @@ export const styles = {
       margin-right: 8px;
       padding: 0 7px;
       font-size: 12px;
-      line-height: 26px;
+      line-height: 28px;
       white-space: nowrap;
       background: #fafafa;
       border: 1px solid #d9d9d9;
@@ -206,6 +275,7 @@ export const styles = {
       border: 1px solid #d9d9d9;
       border-radius: 4px;
       transition: all 0.3s;
+      margin-right: 8px;
     }
 
     input:focus {

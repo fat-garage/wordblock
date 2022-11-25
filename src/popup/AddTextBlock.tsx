@@ -27,6 +27,7 @@ function AddTextBlock() {
   const [tags, setTags] = useState([]);
   const [status, setStatus] = useState("");
   const [isEdit] = useState(Boolean(location.search));
+  const [note, setNote] = useState("")
 
   const canEditContent = useMemo(() => {
     return isEdit && wordData.group === 'created' || !isEdit
@@ -37,6 +38,7 @@ function AddTextBlock() {
       setValue(wordData.content);
       setTags(wordData.tags);
       setStatus(wordData.status);
+      setNote(wordData.note)
     }
   }, [isEdit, wordData]);
 
@@ -50,6 +52,8 @@ function AddTextBlock() {
         create_at: Date.now(),
         type: 'text block',
         group: 'created',
+        note,
+        status,
       } as WordData;
 
       chrome.runtime.sendMessage(
@@ -72,7 +76,8 @@ function AddTextBlock() {
             ...wordData,
             content: value,
             tags,
-            status
+            status,
+            note,
           },
         },
         () => {
@@ -126,6 +131,11 @@ function AddTextBlock() {
         <EmojiStatus status={status} setStatus={setStatus} />
       </div>
 
+      <div css={styles.tagsWrapper}>
+        <div className="wb-label">Note: </div>
+        <input value={note} onChange={(e) => setNote(e.target.value)} />
+      </div>
+
       <div css={styles.submitWrapper}>
         <Button variant="outlined" size="medium" disabled={!value} onClick={() => handleSave()}>
           Save Text Block
@@ -167,6 +177,7 @@ export const styles = {
       line-height: 1.5;
       font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
     }
+    margin-bottom: 4px;
   `,
   submitWrapper: css`
     padding: 20px;
@@ -179,11 +190,19 @@ export const styles = {
   tagsWrapper: css`
     display: flex;
     align-items: center;
-    padding: 12px;
+    padding: 8px 12px;
     .wb-label {
       margin-right: 8px;
       font-weight: bold;
       font-size: 13px;
+    }
+
+    input {
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      padding-left: 6px;
+      height: 30px;
+      outline: none;
     }
   `,
 };
