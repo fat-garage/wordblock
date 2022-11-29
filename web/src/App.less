@@ -1,0 +1,119 @@
+.app {
+  width: 760px;
+  margin: auto;
+  padding: 0 20px;
+
+  .fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.02);
+    background: #f6f8fa;
+    transition: all 0.3s;
+    .header-content {
+      width: 760px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      padding: 0 20px;
+
+      .logo-wrapper {
+        img {
+          width: 28px;
+        }
+
+        span {
+          font-weight: 800;
+          margin-left: 8px;
+        }
+      }
+
+      .sign-in {
+      }
+    }
+  }
+
+  .word-container {
+    padding-top: 60px;
+
+    .search-wrapper {
+      padding: 30px 0 24px;
+      input {
+        border: none;
+        outline: none;
+        background: #f6f8fa;
+        width: 200px;
+        border-bottom: 1px dashed#ccc;
+        margin-right: 24px;
+        padding-bottom: 4px;
+      }
+    }
+
+    .word-list {
+      .word-item {
+        margin-bottom: 24px;
+        line-height: 1.6;
+
+        .word-content {
+          display: -webkit-box;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          -webkit-line-clamp: 2;
+          margin-bottom: 8px;
+
+          /* autoprefixer: ignore next */
+          -webkit-box-orient: vertical;
+          cursor: pointer;
+          &:hover {
+            color: #1677ff;
+          }
+        }
+
+        .status {
+          margin-right: 8px;
+          font-size: 15px;
+        }
+
+        .word-desc {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          color: #999;
+          font-size: 13px;
+        }
+
+        .tags-wrapper {
+          display: flex;
+
+          .tags-item {
+            margin-right: 8px;
+            cursor: pointer;
+            &:hover {
+              color: #1677ff;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.word-details {
+  margin: 20px 0 10px;
+  .details-item {
+    display: flex;
+    margin-bottom: 8px;
+    .item-content {
+      color: #444;
+      flex: 1;
+    }
+    label {
+      width: 100px;
+      font-size: 13px;
+    }
+  }
+}
