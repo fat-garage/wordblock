@@ -13,8 +13,8 @@ chrome?.runtime?.onConnect?.addListener((port: any) => {
   popUpPort = port;
 });
 
-// const checkIsLogin = () => ceramic.isCeramicValid(ceramic.getCeramicClient());
-const checkIsLogin = () => isLogin();
+const checkIsLogin = () => ceramic.isCeramicValid(ceramic.getCeramicClient());
+const getDID = () => isLogin();
 
 const createBlock = (content) =>
   new Promise((resolve, reject) => {
@@ -27,24 +27,6 @@ const createBlock = (content) =>
         reject(error);
       });
   });
-
-// chrome.contextMenus.create(
-//   {
-//     id: 'wordblock',
-//     title: 'Wordblock',
-//     visible: true,
-//     // contexts: ['selection'],
-//     contexts: ['all'],
-//     onclick: async () => {
-//       console.log('wordblock');
-//     },
-//   },
-//   () => {
-//     if (chrome.runtime.lastError) {
-//       console.log('create context menu failed! error:', chrome.runtime.lastError);
-//     }
-//   },
-// );
 
 function checkData(v) {
   const entry = { "'": '&apos;', '"': '&quot;', '<': '&lt;', '>': '&gt;' };
@@ -108,71 +90,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       blockType: 'article',
     });
   }
-  // if (menuItemId === 'wordblock') {
-  //   if (selectionText) {
-  //     if (!checkIsLogin()) {
-  //       console.log('notLogin');
-  //       chrome.tabs.sendMessage(id, { type: 'notLogin' });
-  //       return;
-  //     }
-  //     const { data } = await getData();
-  //     const newBlock = {
-  //       url: pageUrl,
-  //       content: checkData(selectionText),
-  //       author: '',
-  //       tags: 'favorite',
-  //       create_at: Date.now(),
-  //       id: '',
-  //       type: 'text block',
-  //       group: 'favorite',
-  //     } as WordData;
-
-  //     createBlock(newBlock)
-  //       .then((res) => {
-  //         console.log(res);
-  //         newBlock.id = res as string;
-  //         setData([...data, newBlock]);
-  //         console.log(id);
-  //         chrome.tabs.sendMessage(id, { type: 'saved' });
-  //       })
-  //       .catch(() => {
-  //         newBlock.id = getUUID();
-  //         setData([...data, newBlock]);
-  //         chrome.tabs.sendMessage(id, { type: 'saved' });
-  //       });
-  //     return;
-  //   }
-  //   console.log('aaa',await getTabId(),id);
-  //   chrome.tabs.sendMessage(await getTabId(), { type: 'selectText' });
-  //   console.log('bb');
-  // } else if (menuItemId === 'wordblock2') {
-  //   if (!checkIsLogin()) {
-  //     chrome.tabs.sendMessage(tab.id!, { type: 'notLogin' });
-  //     return;
-  //   }
-  //   const { data } = await getData();
-  //   const newBlock = {
-  //     url: pageUrl,
-  //     content: title,
-  //     author: '',
-  //     tags: 'favorite',
-  //     create_at: Date.now(),
-  //     id: '',
-  //     type: 'article',
-  //     group: 'favorite',
-  //   } as WordData;
-  //   createBlock(newBlock)
-  //     .then((res) => {
-  //       newBlock.id = res as string;
-  //       setData([...data, newBlock]);
-  //       chrome.tabs.sendMessage(id, { type: 'saved' });
-  //     })
-  //     .catch(() => {
-  //       newBlock.id = getUUID();
-  //       setData([...data, newBlock]);
-  //       chrome.tabs.sendMessage(id, { type: 'saved' });
-  //     });
-  // }
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -182,28 +99,41 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (index > -1) {
         sendResponse({ type: 'DUPLICATED' });
       } else {
-        setData([
-          ...data,
-          {
-            url: message.url || location.href,
-            content: message.content,
-            author: message.author,
-            tags: message.tags,
-            create_at: Date.now(),
-            id: message.id || getUUID(),
-            type: message.blockType || 'text block',
-            group: 'favorite',
-            items: message.items || [],
-            status: message.status,
-            note: message.note
-          },
-        ]);
+        const content = {
+          url: message.url || location.href,
+          content: message.content,
+          author: message.author,
+          tags: message.tags,
+          create_at: Date.now(),
+          id: message.id || getUUID(),
+          type: message.blockType || 'text block',
+          group: 'favorite',
+          items: message.items || [],
+          status: message.status,
+          note: message.note,
+        };
+        createBlock(content)
+          .then((result) => {
+            getData().then(({ data }) => {
+              setData([
+                ...data,
+                {
+                  ...content,
+                  id: result as string,
+                },
+              ]);
+              sendResponse({ code: 0, result });
+            });
+          })
+          .catch((error) => {
+            sendResponse({ code: -1, error });
+          });
         sendResponse({ type: 'SAVED' });
       }
     });
   } else if (message.type === 'CHECK_IS_LOGIN') {
-    checkIsLogin().then((USER_ID) => {
-      sendResponse({ code: 0, result: { isLogin: Boolean(USER_ID), loginLoading, did: USER_ID } });
+    getDID().then((USER_ID) => {
+      sendResponse({ code: 0, result: { isLogin: checkIsLogin(), loginLoading, did: USER_ID } });
     });
   } else if (message.type === 'LOGIN') {
     loginLoading = true;
@@ -241,7 +171,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
             ...data,
             {
               ...message.content,
-              id: getUUID(),
+              id: result,
             },
           ]);
           sendResponse({ code: 0, result });
@@ -252,18 +182,25 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       });
   } else if (message.type === 'EDIT_BLOCK') {
     getData().then(({ data }) => {
+      let content = null;
       data = data.map((item) => {
         if (item.id === message.content.id) {
+          content = message.content;
           return {
             ...message.content,
           };
         }
-
         return item;
       });
 
       setData(data);
-      sendResponse({ code: 0 });
+
+      ceramic.updateSteam(content.id, content).then(() => {
+        sendResponse({ code: 0 });
+      }).catch(err => {
+        console.log(err, 'updateSteamError')
+        sendResponse({ code: 0 });
+      })
     });
   } else if (message.type === 'GET_PROFILE') {
     ethereum.getWalletAddress().then((address) => {
@@ -276,9 +213,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       });
     });
   } else if (message.type === 'GET_TGA_TIPS') {
-    getTagTips(message.word).then(data => {
+    getTagTips(message.word).then((data) => {
       sendResponse({ data });
-    })
+    });
   }
 
   return true;

@@ -30,6 +30,19 @@ export class Ceramic {
     }
   }
 
+  async updateSteam(id, content) {
+    try {
+    const jsonContent = JSON.stringify(content);
+      const doc = await TileDocument.load(Ceramic.ceramicClient as any, id)
+      await doc.update(content)
+
+      return id
+   } catch (error) {
+      console.log(error);
+      return '';
+    }
+  }
+
   async loadStream(streamId: string) {
     const doc = await TileDocument.load(Ceramic.ceramicClient as any, streamId);
     return doc.content;
