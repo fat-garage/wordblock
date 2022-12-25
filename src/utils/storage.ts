@@ -37,7 +37,7 @@ export function isLogin() {
 }
 
 export function getData(
-  { page, limit, type, search, group }: GetDataParams = {
+  { page, limit, type, search: word, group }: GetDataParams = {
     page: 0,
     limit: 10000,
     type: undefined,
@@ -54,20 +54,42 @@ export function getData(
         data = data.filter((item) => item.type === type);
       }
 
-      if (search) {
-        if (search.includes('#')) {
-          search = search.replace('#', '').toLowerCase()
-          data = data.filter(item => {
-            for (const tag of item.tags) {
-              if (tag.toLowerCase().includes(search)) {
-                return true
+      let flag = false;
+      if (word) {
+        if (word.includes('#')) {
+          const words = word.split(' ').filter((item) => Boolean(item)).map(item => item.replace("#", ""));
+    
+          data = data.filter((item) => {
+            flag = false;
+            item.tags = item.tags.map((tag) => {
+              for (const word of words) {
+                const reg = new RegExp(word, 'ig');
+                const arr = tag.match(reg);
+    
+                if (arr && !tag.includes("highlight")) {
+                  flag = true;
+                  tag = tag.replace(reg, `<span class="highlight">${arr[0]}</span>`);
+                }
               }
-            }
-
-            return false
-          })
+    
+              return tag;
+            });
+    
+            return flag;
+          });
         } else {
-          data = data.filter((item) => item.content.toLowerCase().includes(search.toLowerCase()));
+          const reg = new RegExp(word, 'g');
+          data = data.filter((item) => {
+            flag = false;
+            const arr = item.content.match(reg);
+    
+            if (arr) {
+              flag = true;
+              item.content = item.content.replace(reg, `<span class="highlight">${arr[0]}</span>`);
+            }
+    
+            return flag;
+          });
         }
       }
 
@@ -86,6 +108,8 @@ export function getData(
         ...item,
         author: item.author || 'unknown',
       }));
+
+      console.log(data, '~~~~data~~~')
 
       resolve({
         data: data.slice(page * limit, page * limit + limit),

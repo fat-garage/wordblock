@@ -263,35 +263,6 @@ export default function List(props: Props) {
           {data.map((item) => {
             let word = props.word;
             let content = item.content;
-            let items = item.items;
-            if (word) {
-              if (word.includes("#")) {
-                word = word.replace("#", "");
-                const reg = new RegExp(word, 'ig');
-                
-                item.tags = item.tags.map(tag => {
-                  const arr = tag.match(reg);
-                  if (arr) {
-                    tag = tag.replace(
-                      arr[0],
-                      `<span class="wordblock_highlight">${arr[0]}</span>`,
-                    );
-                  }
-                  return tag
-                })
-
-              } else {
-                const reg = new RegExp(word, 'ig');
-                const arr = content.match(reg);
-
-                if (arr) {
-                  content = content.replace(
-                    arr[0],
-                    `<span class="wordblock_highlight">${arr[0]}</span>`,
-                  );
-                }
-              }
-            }
             return (
               <div
                 key={item.id}

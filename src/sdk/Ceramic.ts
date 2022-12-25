@@ -26,18 +26,17 @@ export class Ceramic {
     } catch (error) {
       console.log(error);
       return '';
-
     }
   }
 
   async updateSteam(id, content) {
     try {
-    const jsonContent = JSON.stringify(content);
-      const doc = await TileDocument.load(Ceramic.ceramicClient as any, id)
-      await doc.update(content)
+      const jsonContent = JSON.stringify(content);
+      const doc = await TileDocument.load(Ceramic.ceramicClient as any, id);
+      await doc.update(content);
 
-      return id
-   } catch (error) {
+      return id;
+    } catch (error) {
       console.log(error);
       return '';
     }
@@ -46,6 +45,14 @@ export class Ceramic {
   async loadStream(streamId: string) {
     const doc = await TileDocument.load(Ceramic.ceramicClient as any, streamId);
     return doc.content;
+  }
+
+  async loadDocumentByController(controller) {
+    const doc = await TileDocument.deterministic(Ceramic.ceramicClient as any, {
+      controllers: [controller],
+      family: '',
+      // tags: ['contacts']
+    });
   }
 
   isCeramicValid(ceramicClient: CeramicClient) {

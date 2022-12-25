@@ -1,4 +1,4 @@
-export type WordDataType = "article" | "text block" | undefined;
+export type WordDataType = 'article' | 'text block' | undefined;
 
 export interface WordData {
   content: string;
@@ -171,48 +171,41 @@ interface Response {
   total: number;
 }
 
-export function getDataRequest({
-  page,
-  pageSize,
-  word,
-  group
-}: params): Promise<Response> {
+export function getDataRequest({ page, pageSize, word, group }: params): Promise<Response> {
   let data = JSON.parse(JSON.stringify(WORD_DATA));
 
   let flag = false;
   if (word) {
-    if (word.includes("#")) {
-      word = word.replace("#", "");
-      const reg = new RegExp(word, "ig");
+    if (word.includes('#')) {
+      const words = word.split(' ').filter((item) => Boolean(item)).map(item => item.replace("#", ""));
 
       data = data.filter((item) => {
         flag = false;
         item.tags = item.tags.map((tag) => {
-          const arr = tag.match(reg);
-          if (arr) {
-            flag = true;
-            tag = tag.replace(
-              reg,
-              `<span class="highlight">${arr[0]}</span>`
-            );
+          for (const word of words) {
+            const reg = new RegExp(word, 'g');
+            const arr = tag.match(reg);
+
+            if (arr && !tag.includes("highlight")) {
+              flag = true;
+              tag = tag.replace(reg, `<span class="highlight">${arr[0]}</span>`);
+            }
           }
+
           return tag;
         });
 
         return flag;
       });
     } else {
-      const reg = new RegExp(word, "ig");
+      const reg = new RegExp(word, 'g');
       data = data.filter((item) => {
         flag = false;
         const arr = item.content.match(reg);
 
         if (arr) {
           flag = true;
-          item.content = item.content.replaceAll(
-            reg,
-            `<span class="highlight">${arr[0]}</span>`
-          );
+          item.content = item.content.replaceAll(reg, `<span class="highlight">${arr[0]}</span>`);
         }
 
         return flag;
@@ -230,6 +223,8 @@ export function getDataRequest({
     }
     return item.group === group;
   });
+
+  console.log('data', data)
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({

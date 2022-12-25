@@ -34,7 +34,7 @@ const styles = {
       box-sizing: border-box;
     }
 
-    .wordblock_highlight {
+    .highlight {
       color: #1976d2;
     }
 
