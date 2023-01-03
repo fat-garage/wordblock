@@ -10,6 +10,7 @@ import loadingSVG from '../assets/img/loading.svg';
 import walletSVG from '../assets/img/wallet.svg';
 import { isLogin, login, logout } from '../utils/storage';
 import SearchBox from '../components/SearchBox';
+import metamaskSvg from '../assets/img/metamask-fox.svg'
 
 function App() {
   const [word, setWord] = useState<string>('');
@@ -62,6 +63,11 @@ function App() {
       },
     );
   };
+  const handleMetamaskInstall = () => {
+    chrome.tabs.create({
+      url: "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
+    })
+  }
 
   const toLogout = () => {
     chrome.runtime.sendMessage(
@@ -106,7 +112,7 @@ function App() {
           </div>
 
           <div css={styles.bottom}>
-            Need help? Contact <strong>WordBlock</strong> Support
+            Please install <div onClick={handleMetamaskInstall}><img src={metamaskSvg} width={20} /><strong>Metamask</strong></div> to connect
           </div>
           {/* <div css={styles.loginBtn} onClick={() => toLogin()}>
             <img src={logo} />
@@ -232,12 +238,23 @@ const styles = {
   bottom: css`
     text-align: center;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-top: 60px;
     color: #999;
-    > strong {
+    img {
+      width: 16px;
+      cursor: pointer;
+      margin: 0 4px;
+    }
+    > div {
+      display: flex;
       color: black;
       font-weight: 800;
-      -webkit-text-stroke: 0.1px #000;
+      align-items: center;
+      margin-right: 4px;
+      cursor: pointer;
     }
   `,
   loginBtn: css`
