@@ -49,11 +49,6 @@ export function getData(
     chrome.storage.local.get([WORD_BLOCK_DATA], (result) => {
       let data: ResponseData['data'] = result[WORD_BLOCK_DATA] || [];
 
-      data = data.map(item => ({
-        ...item,
-        _tags: [...item.tags]
-      }));
-
       data = data.sort((item1, item2) => item2.create_at - item1.create_at);
       if (type) {
         data = data.filter((item) => item.type === type);

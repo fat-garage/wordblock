@@ -195,7 +195,7 @@ export default function List(props: Props) {
         </div>
         <div css={styles.descItem}>
           <label>Tags: </label>
-          <span>{current._tags.map(item =>  `#${item} `)}</span>
+          <span>{current.tags.map(tag => <span dangerouslySetInnerHTML={{ __html: `#${tag} ` }}></span>)}</span>
         </div>
         <div css={styles.descItem}>
           <label>Status: </label>

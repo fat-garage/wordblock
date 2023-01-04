@@ -4,7 +4,6 @@ export interface WordData {
   content: string;
   author: string;
   tags: string[];
-  _tags: string[];
   url: string;
   create_at: number;
   id: string;
@@ -174,10 +173,6 @@ interface Response {
 
 export function getDataRequest({ page, pageSize, word, group }: params): Promise<Response> {
   let data = JSON.parse(JSON.stringify(WORD_DATA));
-  data = data.map(item => ({
-    ...item,
-    _tags: [...item.tags]
-  }));
 
   let flag = false;
   if (word) {

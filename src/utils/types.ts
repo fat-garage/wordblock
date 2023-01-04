@@ -4,7 +4,6 @@ export interface WordData {
   content: string;
   author: string;
   tags: string[];
-  _tags: string[];
   url: string;
   create_at: number;
   id: string;
