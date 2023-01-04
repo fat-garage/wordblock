@@ -180,7 +180,7 @@ function App() {
         </div>
         <div className="details-item">
           <label>Tags: </label>
-          <span>{current?.tags.map(item =>  `#${item} `)}</span>
+          <span>{current?._tags.map(item =>  `#${item} `)}</span>
         </div>
         <div className="details-item">
           <label>Status: </label>
