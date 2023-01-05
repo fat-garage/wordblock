@@ -11,8 +11,7 @@ import EditLocationAltOutlinedIcon from '@mui/icons-material/EditLocationAltOutl
 import Tooltip from '@mui/material/Tooltip';
 import Pagination from '@mui/material/Pagination';
 import { WordData, WordDataType } from '../utils/types';
-import { getData, removeData } from '../utils/storage';
-import { getBlockName } from '../utils/utils';
+import { getData, removeData } from '../utils/api';
 import empty from '../assets/img/empty.png';
 import logo from '../assets/img/logo.png';
 import close from '../assets/img/close.png';

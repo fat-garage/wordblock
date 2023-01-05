@@ -2,6 +2,70 @@ import { WordData, WordDataType } from './types';
 
 const WORD_BLOCK_DATA = 'WORD_BLOCK_DATA';
 const USER_ID = 'USER_ID';
+const IPFS_ID = 'IPFS_ID'
+
+async function postData(url = '', data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  });
+  return response.json(); // parses JSON response into native JavaScript objects
+}
+
+async function fetchData(url: string) {
+  const response = await fetch(url);
+  return response.json();
+}
+
+
+export function getAllDataFromIPFS() {
+  return fetch("https://api.wordblock.xyz/api/v1/ipfs/all");
+}
+
+export function uploadDataToIPFS(data) {
+  return postData("https://api.wordblock.xyz/api/v1/ipfs/upload", data)
+}
+
+export async function fetchDataFromIPFS(did: string) {
+  const res = await fetchData("https://api.wordblock.xyz/api/v1/ipfs/list/" + did);
+  const data = res.data || []
+
+  let item = data[0] || {};
+
+  console.log(item, res, "~~~IPFS_ID~~~")
+
+  chrome.storage.local.set({
+    [IPFS_ID]: item,
+  });
+
+  if (item.id) {
+    const ipfsRes = await fetchData(
+      `https://cloudflare-ipfs.com/ipfs/${item.cid}/${item.file_name}`
+    )
+
+    chrome.storage.local.set({
+      [WORD_BLOCK_DATA]: ipfsRes,
+    });
+
+    return ipfsRes
+  }
+
+  chrome.storage.local.set({
+    [WORD_BLOCK_DATA]: [],
+  });
+
+  return []
+}
 
 interface ResponseData {
   data: WordData[];
@@ -27,10 +91,9 @@ export function logout() {
   return chrome.storage.local.remove(USER_ID);
 }
 
-export function isLogin() {
+export function getDID() {
   return new Promise((resolve) => {
     chrome.storage.local.get([USER_ID], (result) => {
-      console.log(result);
       resolve(result[USER_ID]);
     });
   });
@@ -124,6 +187,19 @@ export function setData(data: WordData[]) {
   chrome.storage.local.set({
     [WORD_BLOCK_DATA]: data,
   });
+
+  chrome.storage.local.get((result) => {
+    uploadDataToIPFS({
+      did: result[USER_ID],
+      id: result[IPFS_ID].id,
+      content: JSON.stringify(data)
+    }).then(res => {
+      console.log("~~~~~~~~res")
+      chrome.storage.local.set({
+        [IPFS_ID]: res.data,
+      });
+    })
+  })
 }
 
 export async function removeData(data: WordData) {
@@ -132,9 +208,7 @@ export async function removeData(data: WordData) {
   const index = res.findIndex((item) => item.id === data.id);
 
   res.splice(index, 1);
-  chrome.storage.local.set({
-    [WORD_BLOCK_DATA]: res,
-  });
+  setData(res);
 }
 
 export async function getTagTips(word: string): Promise<string []> {

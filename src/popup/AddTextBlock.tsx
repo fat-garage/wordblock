@@ -12,8 +12,6 @@ import Tooltip from '@mui/material/Tooltip';
 import logo from '../assets/img/logo.png';
 import logout from '../assets/img/logout.png';
 import back from '../assets/img/back.png';
-import { getData, setData } from '../utils/storage';
-import { getUUID } from '../utils/utils';
 import { Ceramic } from '../sdk/Ceramic';
 import { WordData } from '../utils/types';
 import AddTags from '../components/AddTags';

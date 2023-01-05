@@ -91,23 +91,10 @@ function App() {
             <span>WORDBLOCK</span>
           </div>
 
-          <Button type="link">SIGN IN</Button>
+          <input placeholder="Type To Search ..." onChange={handleWordChange} ref={inputRef} />
         </div>
       </div>
       <div className="word-container">
-        <div className="search-wrapper">
-          <input placeholder="Type To Search ..." onChange={handleWordChange} ref={inputRef} />
-
-          <Radio.Group
-            name="radiogroup"
-            value={group}
-            buttonStyle="solid"
-            onChange={handleGroupChange}
-          >
-            <Radio value={'favorite'}>Favorite</Radio>
-            <Radio value={'created'}>Created</Radio>
-          </Radio.Group>
-        </div>
 
         {shouldReload && (
           <>

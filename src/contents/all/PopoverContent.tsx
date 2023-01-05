@@ -2,7 +2,7 @@
 import { css } from '@emotion/react';
 import { ReactNode, useEffect, useRef, useCallback, useState } from 'react';
 import { WordData, WordDataType } from '../../utils/types';
-import { getData, removeData } from '../../utils/storage';
+import { getData } from '../../utils/api';
 import Pagination from '@mui/material/Pagination';
 
 interface ModalProps {

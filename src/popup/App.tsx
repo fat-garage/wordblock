@@ -4,12 +4,10 @@ import { css, Global } from '@emotion/react';
 
 import Navbar from '../components/Navbar';
 import List from '../components/List';
-import defaultStyles from '../utils/defaultStyles';
 import logo from '../assets/img/logo.png';
 import loadingSVG from '../assets/img/loading.svg';
 import walletSVG from '../assets/img/wallet.svg';
-import { isLogin, login, logout } from '../utils/storage';
-import SearchBox from '../components/SearchBox';
+import { login, logout } from '../utils/api';
 import metamaskSvg from '../assets/img/metamask-fox.svg'
 
 function App() {

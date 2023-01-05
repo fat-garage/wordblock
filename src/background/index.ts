@@ -1,7 +1,7 @@
 import { Ethereum } from '../sdk/Ethereum';
 import { WordData } from '../utils/types';
 import { Ceramic } from '../sdk/Ceramic';
-import { getData, setData, isLogin, getTagTips } from '../utils/storage';
+import { getData, setData, getDID, getTagTips, uploadDataToIPFS, fetchDataFromIPFS } from '../utils/api';
 import { getUUID } from '../utils/utils';
 
 const ceramic = new Ceramic();
@@ -14,7 +14,6 @@ chrome?.runtime?.onConnect?.addListener((port: any) => {
 });
 
 const checkIsLogin = () => ceramic.isCeramicValid(ceramic.getCeramicClient());
-const getDID = () => isLogin();
 
 const createBlock = (content) =>
   new Promise((resolve, reject) => {
@@ -149,6 +148,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           isLogin: true,
           loginLoading: false,
         });
+
+        fetchDataFromIPFS(result.walletAddress);
       })
       .catch((error) => {
         sendResponse({ code: -1, error });
@@ -194,13 +195,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       });
 
       setData(data);
-
-      ceramic.updateSteam(content.id, content).then(() => {
-        sendResponse({ code: 0 });
-      }).catch(err => {
-        console.log(err, 'updateSteamError')
-        sendResponse({ code: 0 });
-      })
+      sendResponse({ code: 0 });
     });
   } else if (message.type === 'GET_PROFILE') {
     ethereum.getWalletAddress().then((address) => {

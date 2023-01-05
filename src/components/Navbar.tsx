@@ -12,7 +12,6 @@ import Tooltip from '@mui/material/Tooltip';
 import logo from '../assets/img/logo.png';
 import logout from '../assets/img/logout.png';
 import edit from '../assets/img/edit.png';
-import { isLogin } from '../utils/storage';
 import { Ethereum } from '../sdk/Ethereum';
 
 interface NavbarProps {

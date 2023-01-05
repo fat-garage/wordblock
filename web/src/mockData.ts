@@ -1,3 +1,34 @@
+import axios from 'axios';
+
+let globalData: any = []
+export async function getAllDataFromIPFS() {
+  if (globalData.length) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(JSON.parse(JSON.stringify(globalData)))
+      }, 500)
+    })
+  };
+
+  let result: any = []
+
+  const res = await axios({
+    url: "https://api.wordblock.xyz/api/v1/ipfs/all"
+  });
+  const data = res.data.data;
+
+  for (const item of data) {
+    const ipfsRes = await axios(`https://cloudflare-ipfs.com/ipfs/${item.cid}/${item.file_name}`);
+    const list = ipfsRes.data ||  []
+
+    result = [...result, ...list]
+  }
+
+  globalData = result;
+
+  return result;
+}
+
 export type WordDataType = 'article' | 'text block' | undefined;
 
 export interface WordData {
@@ -171,8 +202,9 @@ interface Response {
   total: number;
 }
 
-export function getDataRequest({ page, pageSize, word, group }: params): Promise<Response> {
-  let data = JSON.parse(JSON.stringify(WORD_DATA));
+export async function getDataRequest({ page, pageSize, word, group }: params): Promise<Response> {
+  let data = await getAllDataFromIPFS()
+  const total = data.length;
 
   let flag = false;
   if (word) {
@@ -213,25 +245,20 @@ export function getDataRequest({ page, pageSize, word, group }: params): Promise
     }
   }
 
-  data = data.filter((item) => {
-    if (!group) {
-      return true;
-    }
+  // data = data.filter((item) => {
+  //   if (!group) {
+  //     return true;
+  //   }
 
-    if (group === 'favorite' && !item.group) {
-      return true;
-    }
-    return item.group === group;
-  });
+  //   if (group === 'favorite' && !item.group) {
+  //     return true;
+  //   }
+  //   return item.group === group;
+  // });
 
-  console.log('data', data)
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        total: 30,
-        code: 1,
-        data: page >= 4 ? [] : data,
-      });
-    }, 1000);
-  });
+  return {
+      total: total.length,
+      code: 1,
+      data,
+  }
 }

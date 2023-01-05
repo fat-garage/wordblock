@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import {getTagTips} from '../utils/storage'
+import {getTagTips} from '../utils/api'
 import { css } from '@emotion/react';
 
 interface Props {
