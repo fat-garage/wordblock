@@ -106,10 +106,16 @@ export default function Navbar({ word, setWord, toLogout, did }: NavbarProps) {
       },
     );
   });
+
+  const handleClickLogo = () => {
+    chrome.tabs.create({
+      url: "http://wordblock.xyz"
+    })
+  }
   return (
     <div css={styles.navbar}>
       <div css={styles.leftWrapper}>
-        <img src={logo} />
+        <img src={logo} css={styles.logo} onClick={handleClickLogo} />
         <span
           onMouseEnter={() => setHoverWalletAddress(true)}
           onMouseLeave={() => setHoverWalletAddress(false)}
@@ -172,6 +178,9 @@ export const styles = {
     background: rgb(239, 239, 239);
     padding: 0 10px;
     height: 50px;
+  `,
+  logo: css`
+    cursor: pointer;
   `,
   leftWrapper: css`
     display: flex;
