@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "WordBlock",
   "short_name": "WB",
   "description": "A web3 note-taking tool built for open and interactive block reference",
