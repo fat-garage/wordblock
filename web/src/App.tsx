@@ -1,12 +1,11 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import './App.less';
-import { Button, Radio, Modal } from 'antd';
+import { Modal } from 'antd';
 import { getDataRequest, WordData } from './mockData';
 import InfiniteLoading from './components/InfiniteLoading/InfiniteLoading';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import logoPng from './assets/logo.png';
-import Item from 'antd/es/list/Item';
 
 function App() {
   const [list, setList] = useState<WordData[]>([]);
@@ -32,7 +31,7 @@ function App() {
         return;
       }
 
-      if (data.length < 10) {
+      if (data.length < 10000) {
         state.loaded();
         setTimeout(() => {
           state.complete();
