@@ -22,7 +22,7 @@ import copy from '../assets/img/copy.png';
 import edit from '../assets/img/edit.png';
 import view from '../assets/img/view.png';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import edit2 from '../assets/img/edit2.png'
+import edit2 from '../assets/img/edit2.png';
 
 interface Props {
   styles?: any;
@@ -156,9 +156,9 @@ export default function List(props: Props) {
   };
 
   const editWord = (item?: WordData) => {
-    (window as any).wordData = item || current
-    history.push('/add?edit=true')
-  }
+    (window as any).wordData = item || current;
+    history.push('/add?edit=true');
+  };
 
   const getDetail = () => {
     if (!showDetail) {
@@ -194,7 +194,11 @@ export default function List(props: Props) {
         </div>
         <div css={styles.descItem}>
           <label>Tags: </label>
-          <span>{current.tags.map(tag => <span dangerouslySetInnerHTML={{ __html: `#${tag} ` }}></span>)}</span>
+          <span>
+            {current.tags.map((tag) => (
+              <span dangerouslySetInnerHTML={{ __html: `#${tag} ` }}></span>
+            ))}
+          </span>
         </div>
         <div css={styles.descItem}>
           <label>Status: </label>
@@ -213,17 +217,22 @@ export default function List(props: Props) {
           <span className="item-content">
             {current.items?.length ? (
               <span>{current.items.map((item) => renderItem(item))}</span>
-            ) : <>
-            
-            <span dangerouslySetInnerHTML={{ __html: current.content }}></span>
-                <img src={edit} width={15} onClick={() => editWord()} style={{
-                  position: "relative",
-                  top: 3,
-                  left: 7,
-                  cursor: "pointer"
-                }} />
+            ) : (
+              <>
+                <span dangerouslySetInnerHTML={{ __html: current.content }}></span>
+                <img
+                  src={edit}
+                  width={15}
+                  onClick={() => editWord()}
+                  style={{
+                    position: 'relative',
+                    top: 3,
+                    left: 7,
+                    cursor: 'pointer',
+                  }}
+                />
               </>
-            }
+            )}
           </span>
         </div>
       </div>
@@ -260,8 +269,6 @@ export default function List(props: Props) {
       <div>
         <div>
           {data.map((item) => {
-            let word = props.word;
-            let content = item.content;
             return (
               <div
                 key={item.id}
@@ -277,15 +284,23 @@ export default function List(props: Props) {
               >
                 <div css={styles.textWrapper}>
                   {/* {item.type === 'article' && <img src={bookmark} />} */}
-                  {item.status && <span style={{marginRight: '4px', fontSize: '15px'}}>{item.status}</span>}
-                  <span dangerouslySetInnerHTML={{ __html: content }}></span>
+                  {item.status && (
+                    <span style={{ marginRight: '4px', fontSize: '15px' }}>{item.status}</span>
+                  )}
+                  <span dangerouslySetInnerHTML={{ __html: item.htmlContent! }}></span>
                 </div>
                 {/* <div css={styles.dateWrapper}>
                   <span>{getBlockName(item.type)}</span>
                   <span>{dayjs(item.create_at).format('YYYY-MM-DD HH:mm')}</span>
                 </div> */}
                 <div css={styles.descWrapper}>
-                  <span css={styles.tagsWrapper}>{item.tags.map(tag => <span dangerouslySetInnerHTML={{ __html: `#${tag} ` }}></span>)}</span>
+                  {Array.isArray(item.tags) && (
+                    <span css={styles.tagsWrapper}>
+                      {item.tags.map((tag) => (
+                        <span dangerouslySetInnerHTML={{ __html: `#${tag} ` }}></span>
+                      ))}
+                    </span>
+                  )}
                   {getAction(item)}
                 </div>
               </div>
@@ -319,7 +334,13 @@ export default function List(props: Props) {
           >
             Favorite
           </span>
-          <span css={css`margin: 0 4px;`}>|</span>
+          <span
+            css={css`
+              margin: 0 4px;
+            `}
+          >
+            |
+          </span>
           <span
             css={css`
               color: ${group === 'created' && 'rgb(0, 127, 255)'};

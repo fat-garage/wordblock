@@ -15,6 +15,7 @@ import reference1 from '../../assets/img/reference1.jpeg';
 import reference2 from '../../assets/img/reference2.jpeg';
 import loadingSVG from '../../assets/img/loading_gray.svg';
 import SaveWordBlockModal from './SaveWordBlockModal'
+import logo from '../../assets/img/logo.png';
 
 const CustomButton = styled(Button)({
   'text-transform': 'none',
@@ -63,7 +64,7 @@ export default function App() {
     });
 
     setInterval(() => {
-      addEventListener();
+      // addEventListener();
     }, 1000);
   }, []);
 
@@ -245,31 +246,31 @@ export default function App() {
             type: 'parent',
           };
 
-          createBlock({
-            newBlock: wordblock,
-            onSuccess: (res) => {
-              reRenderWheel(() => {
-                wordblock.id = res;
-                setCurrentData(wordblock);
-                const el = textbox.firstChild.firstChild;
-                const p = buildBlock(wordblock);
-                el.replaceChild(p, el.firstChild);
-                selection.selectAllChildren(textbox);
-                selection.collapse(p, 3);
-              });
-            },
-            onError: () => {
-              reRenderWheel(() => {
-                wordblock.id = getUUID();
-                setCurrentData(wordblock);
-                const el = textbox.firstChild.firstChild;
-                const p = buildBlock(wordblock);
-                el.replaceChild(p, el.firstChild);
-                selection.selectAllChildren(textbox);
-                selection.collapse(p, 3);
-              });
-            },
-          });
+          // createBlock({
+          //   newBlock: wordblock,
+          //   onSuccess: (res) => {
+          //     reRenderWheel(() => {
+          //       wordblock.id = res;
+          //       setCurrentData(wordblock);
+          //       const el = textbox.firstChild.firstChild;
+          //       const p = buildBlock(wordblock);
+          //       el.replaceChild(p, el.firstChild);
+          //       selection.selectAllChildren(textbox);
+          //       selection.collapse(p, 3);
+          //     });
+          //   },
+          //   onError: () => {
+          //     reRenderWheel(() => {
+          //       wordblock.id = getUUID();
+          //       setCurrentData(wordblock);
+          //       const el = textbox.firstChild.firstChild;
+          //       const p = buildBlock(wordblock);
+          //       el.replaceChild(p, el.firstChild);
+          //       selection.selectAllChildren(textbox);
+          //       selection.collapse(p, 3);
+          //     });
+          //   },
+          // });
           const p = buildBlock(wordblock);
           li.appendChild(p);
           textbox.removeChild(textbox.firstChild);
@@ -298,43 +299,42 @@ export default function App() {
           };
           a.setAttribute('href', `${wordblock.url}#wordblock=${JSON.stringify(wordblock)}`);
 
-          createBlock({
-            newBlock: wordblock,
-            onSuccess: (res) => {
-              reRenderWheel(() => {
-                wordblock.id = res;
-                setCurrentData(wordblock);
-                const p = buildBlock(wordblock);
-                const li = document.querySelector('.ProseMirror').firstChild.lastChild;
-                li.replaceChild(p, li.firstChild);
-                selection.selectAllChildren(textbox);
-                selection.collapse(focusNode, 4);
-              });
-            },
-            onError: () => {
-              reRenderWheel(() => {
-                wordblock.id = getUUID();
-                setCurrentData(wordblock);
-                const p = buildBlock(wordblock);
-                const li = document.querySelector('.ProseMirror').firstChild.lastChild;
-                li.replaceChild(p, li.firstChild);
-                selection.selectAllChildren(textbox);
-                selection.collapse(focusNode, 4);
-              });
-            },
-          });
+          // createBlock({
+          //   newBlock: wordblock,
+          //   onSuccess: (res) => {
+          //     reRenderWheel(() => {
+          //       wordblock.id = res;
+          //       setCurrentData(wordblock);
+          //       const p = buildBlock(wordblock);
+          //       const li = document.querySelector('.ProseMirror').firstChild.lastChild;
+          //       li.replaceChild(p, li.firstChild);
+          //       selection.selectAllChildren(textbox);
+          //       selection.collapse(focusNode, 4);
+          //     });
+          //   },
+          //   onError: () => {
+          //     reRenderWheel(() => {
+          //       wordblock.id = getUUID();
+          //       setCurrentData(wordblock);
+          //       const p = buildBlock(wordblock);
+          //       const li = document.querySelector('.ProseMirror').firstChild.lastChild;
+          //       li.replaceChild(p, li.firstChild);
+          //       selection.selectAllChildren(textbox);
+          //       selection.collapse(focusNode, 4);
+          //     });
+          //   },
+          // });
           const text1 = document.createTextNode('<');
           a.innerText = 'block';
           const text2 = document.createTextNode(`=`);
           const text3 = document.createTextNode(`>`);
-          // focusNode.appendChild(text1);
           focusNode.appendChild(text1);
           focusNode.appendChild(a);
           focusNode.appendChild(text2);
           focusNode.appendChild(text3);
           const selection = window.getSelection();
           selection.selectAllChildren(textbox);
-          // selection.collapseToEnd();
+          selection.collapseToEnd();
           selection.collapse(focusNode, 4);
         }
       });
@@ -460,6 +460,8 @@ export default function App() {
     };
     delete wordblock.content;
     delete wordblock.type;
+    delete wordblock.htmlContent;
+    delete wordblock.htmlTags;
     a.setAttribute('href', `${item.url}#wordblock=${JSON.stringify(wordblock)}`);
 
     let text1;
@@ -479,6 +481,7 @@ export default function App() {
     p.appendChild(a);
     p.appendChild(text2);
     currentNode.innerHTML = '';
+    console.log(arr[0])
     if (arr[0]) {
       currentNode.innerHTML = arr[0];
     }
@@ -570,6 +573,9 @@ export default function App() {
 
   return (
     <div id="wordblock" css={styles.wordblock}>
+      <div css={styles.fixedLogo} onClick={handleClickLogo}>
+        <img src={logo} />
+      </div>
       <Global styles={defaultStyles.global} />
 
       <PopoverContent
@@ -741,6 +747,7 @@ export default function App() {
       </Drawer>
 
       <SaveWordBlockModal visible={showSaveWordBlockModal} onCancel={() => setShowSaveWordBlockModal(false)} blockData={blockData} />
+
     </div>
   );
 }

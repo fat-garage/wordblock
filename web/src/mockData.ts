@@ -43,6 +43,8 @@ export interface WordData {
   items?: WordData[];
   status?: string;
   note?: string;
+  htmlTags?: string[];
+  htmlContent?: string;
 }
 
 const WORD_DATA: WordData[] = [
@@ -213,7 +215,7 @@ export async function getDataRequest({ page, pageSize, word, group }: params): P
 
       data = data.filter((item) => {
         flag = false;
-        item.tags = item.tags.map((tag) => {
+        item.htmlTags = item.tags.map((tag) => {
           for (const word of words) {
             const reg = new RegExp(word, 'g');
             const arr = tag.match(reg);
@@ -237,7 +239,7 @@ export async function getDataRequest({ page, pageSize, word, group }: params): P
 
         if (arr) {
           flag = true;
-          item.content = item.content.replaceAll(reg, `<span class="highlight">${arr[0]}</span>`);
+          item.htmlContent = item.content.replaceAll(reg, `<span class="highlight">${arr[0]}</span>`);
         }
 
         return flag;
@@ -255,6 +257,13 @@ export async function getDataRequest({ page, pageSize, word, group }: params): P
   //   }
   //   return item.group === group;
   // });
+
+  data = data.map((item) => ({
+    ...item,
+    author: item.author || 'unknown',
+    htmlContent: item.htmlContent || item.content,
+    htmlTags: item.htmlTags || item.tags,
+  }));
 
   return {
       total: total.length,

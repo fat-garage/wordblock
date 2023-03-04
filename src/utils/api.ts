@@ -124,7 +124,7 @@ export function getData(
     
           data = data.filter((item) => {
             flag = false;
-            item.tags = item.tags.map((tag) => {
+            item.htmlTags = item.tags.map((tag) => {
               for (const word of words) {
                 const reg = new RegExp(word, 'ig');
                 const arr = tag.match(reg);
@@ -148,7 +148,7 @@ export function getData(
     
             if (arr) {
               flag = true;
-              item.content = item.content.replace(reg, `<span class="highlight">${arr[0]}</span>`);
+              item.htmlContent = item.content.replace(reg, `<span class="highlight">${arr[0]}</span>`);
             }
     
             return flag;
@@ -170,6 +170,8 @@ export function getData(
       data = data.map((item) => ({
         ...item,
         author: item.author || 'unknown',
+        htmlContent: item.htmlContent || item.content,
+        htmlTags: item.htmlTags || item.tags,
       }));
 
       console.log(data, '~~~~data~~~')

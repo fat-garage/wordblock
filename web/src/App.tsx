@@ -102,12 +102,12 @@ function App() {
                 <div className="word-item">
                   <div className="word-content" onClick={() => openDetails(item)}>
                     {item.status && <span className="status">{item.status}</span>}
-                    <span dangerouslySetInnerHTML={{ __html: item.content }} />
+                    <span dangerouslySetInnerHTML={{ __html: item.htmlContent! }} />
                   </div>
 
                   <div className="word-desc">
                     <div className="tags-wrapper">
-                      {item.tags.map((tag) => (
+                      {item.htmlTags!.map((tag) => (
                         <span className="tags-item" onClick={() => handleSelectTag(tag)}>
                           #<span dangerouslySetInnerHTML={{ __html: tag }} />
                         </span>

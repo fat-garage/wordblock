@@ -12,4 +12,6 @@ export interface WordData {
   items?: WordData[];
   status?: string;
   note?: string;
+  htmlTags?: string[];
+  htmlContent?: string;
 }

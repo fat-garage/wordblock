@@ -113,19 +113,6 @@ const PopoverContent = function ({
           `}
         >
           {data.map((item) => {
-            let content = item.content;
-            if (word) {
-              const reg = new RegExp(word, 'ig');
-              const arr = content.match(reg);
-
-              if (arr) {
-                content = content.replace(
-                  arr[0],
-                  `<span class="wordblock_highlight">${arr[0]}</span>`,
-                );
-              }
-            }
-
             return (
               <div
                 onClick={() => onApply(item)}
@@ -149,7 +136,7 @@ const PopoverContent = function ({
                     -webkit-line-clamp: 2;
                     -webkit-box-orient: vertical;
                   `}
-                  dangerouslySetInnerHTML={{ __html: content }}
+                  dangerouslySetInnerHTML={{ __html: item.htmlContent }}
                 />
               </div>
             );
