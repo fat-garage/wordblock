@@ -24,6 +24,12 @@ export async function getAllDataFromIPFS() {
     result = [...result, ...list]
   }
 
+  result = result.filter(item => item.content).map(item => ({
+    ...item,
+    tags: item.tags || []
+  }));
+  console.log(result)
+
   globalData = result;
 
   return result;
