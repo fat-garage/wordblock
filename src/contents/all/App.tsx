@@ -17,6 +17,8 @@ import loadingSVG from '../../assets/img/loading_gray.svg';
 import SaveWordBlockModal from './SaveWordBlockModal'
 import logo from '../../assets/img/logo.png';
 
+const map = new Map();
+
 const CustomButton = styled(Button)({
   'text-transform': 'none',
 });
@@ -64,7 +66,7 @@ export default function App() {
     });
 
     setInterval(() => {
-      // addEventListener();
+      addEventListener();
     }, 1000);
   }, []);
 
@@ -74,14 +76,14 @@ export default function App() {
     }
 
     [...textbox.querySelectorAll('a')].forEach((el) => {
-      if (el.getAttribute('isAdded')) {
+      if (map.get(el)) {
         return;
       }
 
-      el.setAttribute('isAdded', 'true');
+      map.set(el, true)
       el.addEventListener('click', () => {
         if (!el.href.includes('https://wordblock')) {
-          window.open(el.href.split('#')[0]);
+        window.open(el.href.split('#')[0]);
         }
       });
 
@@ -462,6 +464,7 @@ export default function App() {
     delete wordblock.type;
     delete wordblock.htmlContent;
     delete wordblock.htmlTags;
+    delete wordblock.note;
     a.setAttribute('href', `${item.url}#wordblock=${JSON.stringify(wordblock)}`);
 
     let text1;
@@ -498,15 +501,15 @@ export default function App() {
       textbox.replaceChild(ul, currentNode);
     }
 
-    setTimeout(() => {
-      if (oldParent) {
-        const data: any = JSON.parse(getQueryString('wordblock', oldParent.href));
-        data.content = `${data.content}~${item.id}`;
+    // setTimeout(() => {
+    //   if (oldParent) {
+    //     const data: any = JSON.parse(getQueryString('wordblock', oldParent.href));
+    //     data.content = `${data.content}~${item.id}`;
 
-        const a = currentNode.parentElement.querySelector('a');
-        a.setAttribute('href', `https://wordblock/#wordblock=${JSON.stringify(data)}`);
-      }
-    }, 100);
+    //     const a = currentNode.parentElement.querySelector('a');
+    //     a.setAttribute('href', `https://wordblock/#wordblock=${JSON.stringify(data)}`);
+    //   }
+    // }, 100);
 
     handleClose();
     Message({ content: 'Apply Succeessfully' });
