@@ -1,4 +1,4 @@
-# Wordblock
+# Wordblock-Test
 
 A web3 note-taking tool built for open and interactive block reference. Everyone can publish user-owned notes (or articles, websites), composed by text cells with wallet signatures (i.e., word blocks).
 
