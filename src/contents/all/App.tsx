@@ -220,127 +220,6 @@ export default function App() {
         });
       });
 
-      textbox.addEventListener('keydown', async (e) => {
-        const selection = getSelection();
-        const focusNode = selection.focusNode;
-        const currentNode = selection.focusNode.parentElement;
-        const range = selection.getRangeAt(0);
-        const textNode = range.startContainer;
-        const startOffset = range.startOffset;
-
-        if (e.code === 'Enter' && !textbox.textContent) {
-          const res = await checkIsLogin();
-          if (!res) {
-            Message({ content: 'Please login first' });
-            return;
-          }
-          const ul = document.createElement('ul');
-          const li = document.createElement('li');
-          ul.appendChild(li);
-          const wordblock = {
-            url: location.href,
-            content: '',
-            author: (document.querySelector('.css-j79vnj') || document.querySelector('.css-72jcwc'))
-              .textContent,
-            tags: 'web3',
-            create_at: Date.now(),
-            id: '',
-            type: 'parent',
-          };
-
-          // createBlock({
-          //   newBlock: wordblock,
-          //   onSuccess: (res) => {
-          //     reRenderWheel(() => {
-          //       wordblock.id = res;
-          //       setCurrentData(wordblock);
-          //       const el = textbox.firstChild.firstChild;
-          //       const p = buildBlock(wordblock);
-          //       el.replaceChild(p, el.firstChild);
-          //       selection.selectAllChildren(textbox);
-          //       selection.collapse(p, 3);
-          //     });
-          //   },
-          //   onError: () => {
-          //     reRenderWheel(() => {
-          //       wordblock.id = getUUID();
-          //       setCurrentData(wordblock);
-          //       const el = textbox.firstChild.firstChild;
-          //       const p = buildBlock(wordblock);
-          //       el.replaceChild(p, el.firstChild);
-          //       selection.selectAllChildren(textbox);
-          //       selection.collapse(p, 3);
-          //     });
-          //   },
-          // });
-          const p = buildBlock(wordblock);
-          li.appendChild(p);
-          textbox.removeChild(textbox.firstChild);
-          textbox.replaceChild(ul, textbox.lastChild);
-          const selection = window.getSelection();
-          selection.selectAllChildren(textbox);
-          selection.collapse(p, 3);
-        }
-
-        if (e.code === 'Enter' && currentNode.tagName === 'LI' && !focusNode.textContent.trim()) {
-          const res = await checkIsLogin();
-          if (!res) {
-            Message({ content: 'Please login first' });
-            return;
-          }
-          const a = document.createElement('a');
-          const wordblock = {
-            url: location.href,
-            content: '',
-            author: (document.querySelector('.css-j79vnj') || document.querySelector('.css-72jcwc'))
-              .textContent,
-            tags: 'web3',
-            create_at: Date.now(),
-            id: '',
-            type: 'parent',
-          };
-          a.setAttribute('href', `${wordblock.url}#wordblock=${JSON.stringify(wordblock)}`);
-
-          // createBlock({
-          //   newBlock: wordblock,
-          //   onSuccess: (res) => {
-          //     reRenderWheel(() => {
-          //       wordblock.id = res;
-          //       setCurrentData(wordblock);
-          //       const p = buildBlock(wordblock);
-          //       const li = document.querySelector('.ProseMirror').firstChild.lastChild;
-          //       li.replaceChild(p, li.firstChild);
-          //       selection.selectAllChildren(textbox);
-          //       selection.collapse(focusNode, 4);
-          //     });
-          //   },
-          //   onError: () => {
-          //     reRenderWheel(() => {
-          //       wordblock.id = getUUID();
-          //       setCurrentData(wordblock);
-          //       const p = buildBlock(wordblock);
-          //       const li = document.querySelector('.ProseMirror').firstChild.lastChild;
-          //       li.replaceChild(p, li.firstChild);
-          //       selection.selectAllChildren(textbox);
-          //       selection.collapse(focusNode, 4);
-          //     });
-          //   },
-          // });
-          const text1 = document.createTextNode('<');
-          a.innerText = 'block';
-          const text2 = document.createTextNode(`=`);
-          const text3 = document.createTextNode(`>`);
-          focusNode.appendChild(text1);
-          focusNode.appendChild(a);
-          focusNode.appendChild(text2);
-          focusNode.appendChild(text3);
-          const selection = window.getSelection();
-          selection.selectAllChildren(textbox);
-          selection.collapseToEnd();
-          selection.collapse(focusNode, 4);
-        }
-      });
-
       textbox.addEventListener('input', async () => {
         const selection = getSelection();
         const range = selection.getRangeAt(0);
@@ -351,15 +230,16 @@ export default function App() {
         const textContent = textNode.textContent;
         setWord('');
 
-        let arr = textContent.match(/\(\((.*?)\)\)/);
+        const arr = textContent.match(/\(\((.*?)\)\)/);
         if (arr && arr[1]) {
           setWord(arr[1]);
         }
-        arr = textContent.match(/\[\[(.*?)\]\]/);
-        if (arr && arr[1]) {
-          setWord(arr[1]);
-        }
+        // arr = textContent.match(/\[\[(.*?)\]\]/);
+        // if (arr && arr[1]) {
+        //   setWord(arr[1]);
+        // }
         currentNode = selection.focusNode.parentElement;
+        console.log("~~~~~~~~currentNode", currentNode)
         if (lastText.length > textContent.length) {
           lastText = textContent;
           return;
@@ -369,7 +249,7 @@ export default function App() {
           textContent?.slice(startOffset - 2, startOffset) === '((' &&
           (!textContent[startOffset] ||
             textContent[startOffset] === ' ' ||
-            textContent[startOffset] == '>')
+            textContent[startOffset] === '>')
         ) {
           const res = await checkIsLogin();
           if (!res) {
@@ -431,85 +311,22 @@ export default function App() {
     setShowDetail(false);
   };
 
-  const checkParent = (arr) => {
-    if (!arr) {
-      return false;
-    }
-    for (const a of arr) {
-      if (a.href.includes('https://wordblock/#wordblock')) {
-        return a;
-      }
-    }
-
-    return false;
-  };
 
   const handleApply = (item: WordData) => {
-    let arr = [];
-    if (/\(\(.*?\)\)/.test(currentNode.innerHTML)) {
-      arr = currentNode.innerHTML.split(/\(\(.*?\)\)/);
-    } else {
-      arr = currentNode.innerHTML.split(/\[\[.*?\]\]/);
-    }
-
+    const blockquote = document.createElement("blockquote");
     const p = document.createElement('p');
-    const a = document.createElement('a');
-    const arrs = currentNode.parentElement.querySelectorAll('a');
-    const oldParent = checkParent(arrs);
+    const em = document.createElement('em');
+    const content = item.status ? `${item.status} ${item.content}`  : item.content;
+    
+    em.innerHTML = content;
+    p.appendChild(em)
+    blockquote.appendChild(p)
+    currentNode.parentElement.replaceChild(blockquote, currentNode)
 
-    const wordblock = {
-      ...item,
-    };
-    delete wordblock.content;
-    delete wordblock.type;
-    delete wordblock.htmlContent;
-    delete wordblock.htmlTags;
-    delete wordblock.note;
-    a.setAttribute('href', `${item.url}#wordblock=${JSON.stringify(wordblock)}`);
-
-    let text1;
-    let text2;
-
-    if (item.type === 'article') {
-      text1 = document.createTextNode('<');
-      a.innerText = 'article';
-      text2 = document.createTextNode(`=${item.content}>`);
-    } else {
-      text1 = document.createTextNode('<');
-      a.innerText = 'block';
-      text2 = document.createTextNode(`=${item.content}>`);
-    }
-
-    p.appendChild(text1);
-    p.appendChild(a);
-    p.appendChild(text2);
-    currentNode.innerHTML = '';
-    console.log(arr[0])
-    if (arr[0]) {
-      currentNode.innerHTML = arr[0];
-    }
-    currentNode.appendChild(p);
-    if (arr[1]) {
-      currentNode.innerHTML += arr[1];
-    }
-
-    if (currentNode.parentElement.tagName != 'LI') {
-      const ul = document.createElement('ul');
-      const li = document.createElement('li');
-      ul.appendChild(li);
-      li.appendChild(p);
-      textbox.replaceChild(ul, currentNode);
-    }
-
-    // setTimeout(() => {
-    //   if (oldParent) {
-    //     const data: any = JSON.parse(getQueryString('wordblock', oldParent.href));
-    //     data.content = `${data.content}~${item.id}`;
-
-    //     const a = currentNode.parentElement.querySelector('a');
-    //     a.setAttribute('href', `https://wordblock/#wordblock=${JSON.stringify(data)}`);
-    //   }
-    // }, 100);
+    setTimeout(() => {
+      console.log("~~~", em)
+      em.setAttribute('name', 'wordblock')
+    }, 200)
 
     handleClose();
     Message({ content: 'Apply Succeessfully' });
@@ -576,9 +393,9 @@ export default function App() {
 
   return (
     <div id="wordblock" css={styles.wordblock}>
-      <div css={styles.fixedLogo} onClick={handleClickLogo}>
+      {/* <div css={styles.fixedLogo} onClick={handleClickLogo}>
         <img src={logo} />
-      </div>
+      </div> */}
       <Global styles={defaultStyles.global} />
 
       <PopoverContent
@@ -911,3 +728,4 @@ const styles = {
     font-size: 13px;
   `,
 };
+

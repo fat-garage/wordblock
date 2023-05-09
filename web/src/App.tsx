@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef } from 'react';
 import './App.less';
 import { Modal } from 'antd';
-import { getDataRequest, WordData } from './mockData';
-import InfiniteLoading from './components/InfiniteLoading/InfiniteLoading';
 import _ from 'lodash';
 import dayjs from 'dayjs';
+import { getDataRequest, WordData } from './mockData';
+import InfiniteLoading from './components/InfiniteLoading/InfiniteLoading';
 import logoPng from './assets/logo.png';
 
 function App() {
