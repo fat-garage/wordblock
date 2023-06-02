@@ -66,7 +66,7 @@ export default function App() {
     });
 
     setInterval(() => {
-      addEventListener();
+      // addEventListener();
     }, 1000);
   }, []);
 
@@ -316,17 +316,16 @@ export default function App() {
     const blockquote = document.createElement("blockquote");
     const p = document.createElement('p');
     const em = document.createElement('em');
+    const a = document.createElement("a");
     const content = item.status ? `${item.status} ${item.content}`  : item.content;
+    a.innerHTML = " >>";
+    a.href = item.url;
     
     em.innerHTML = content;
     p.appendChild(em)
+    p.appendChild(a)
     blockquote.appendChild(p)
     currentNode.parentElement.replaceChild(blockquote, currentNode)
-
-    setTimeout(() => {
-      console.log("~~~", em)
-      em.setAttribute('name', 'wordblock')
-    }, 200)
 
     handleClose();
     Message({ content: 'Apply Succeessfully' });
