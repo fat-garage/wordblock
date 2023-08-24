@@ -210,8 +210,17 @@ interface Response {
   total: number;
 }
 
+function getMockData(): Promise<WordData[]>  {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(JSON.parse(JSON.stringify(WORD_DATA)))
+    }, 1000)
+  })
+}
+
 export async function getDataRequest({ page, pageSize, word, group }: params): Promise<Response> {
-  let data = await getAllDataFromIPFS()
+  // let data = await getAllDataFromIPFS()
+  let data = await getMockData();
   const total = data.length;
 
   let flag = false;
@@ -272,7 +281,7 @@ export async function getDataRequest({ page, pageSize, word, group }: params): P
   }));
 
   return {
-      total: total.length,
+      total,
       code: 1,
       data,
   }
